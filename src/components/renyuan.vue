@@ -377,6 +377,7 @@ export default {
       { text: '人员编号', value: 'personid'},
       { text: '人员类型', value: 'persontype'},
       { text: '账号状态', value: 'status'},
+      { text: '操作', value: 'actions', sortable: false },
     ],
     desserts: [],
     editedIndex: -1,
