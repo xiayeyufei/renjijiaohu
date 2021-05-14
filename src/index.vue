@@ -1,107 +1,104 @@
-<!-- 首页 -->
 <template>
-  <div class="index">
-    <webTop ref="webTopRef" :paramThis="currentThis"/>
-    <div class="left-nav" :class="{'close-nav':isCollapse}">
-      <div class="logo-div" v-show="!isCollapse">
-        LOGO
-      </div>
-      <div class="logo-div" :class="{'close-nav':isCollapse}" v-show="isCollapse">
-        <div class="close-nav-logo"></div>
-      </div>
-      <div class="nav" :class="{'close-nav':isCollapse}">
-        <el-menu
-            @select="handleSelect"
-            class="el-menu-vertical-demo"
-            :class="{'close-nav':isCollapse}"
-            style="width: 100%;height: calc(100vh - 60px);overflow-y: auto;"
-            background-color="#24292e"
-            text-color="#fff"
-            active-text-color="#19c6ff"
-            :default-active="activeIndex"
-            router
-            :collapse="isCollapse"
-        >
-          <NavMenu :navMenus="menuData"></NavMenu>
-        </el-menu>
-      </div>
-    </div>
-<!--    <div class="web-container" :class="{'web-container-closed':isCollapse}">-->
-<!--      <router-view></router-view>-->
-<!--    </div>-->
-  </div>
+  <v-app id="inspire">
+    <v-navigation-drawer
+        v-model="drawer"
+        app
+    >
+      <v-card
+          class="mx-auto"
+          max-width="300"
+          tile
+      >
+        <v-list flat>
+          <v-subheader>REPORTS</v-subheader>
+          <v-list-item-group
+              v-model="selectedItem"
+              color="primary"
+          >
+            <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+            >
+              <v-list-item-icon>
+                <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.text"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
+      <!--  -->
+    </v-navigation-drawer>
+
+    <v-app-bar app>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+      <v-toolbar-title>Application</v-toolbar-title>
+      <v-spacer></v-spacer>
+
+      <v-responsive max-width="260">
+        <v-row style="padding: 12px">
+
+          <span style="text-align: center;color:black;font-size: small;margin: 10px;font-family: Roboto,sans-serif;color: rgba(0,0,0,.6) !important">
+            欢迎，{{person.name}}
+          </span>
+          <v-menu
+
+              offset-y
+              open-on-hover
+          >
+            <template v-slot:activator="{ on, attrs }" >
+              <v-btn  v-bind="attrs"
+                      height="100%"
+                      v-on="on" elevation="0" style="text-align: center;color:white;" @click="$router.push('/login')">
+                <v-avatar
+                    size="40"
+                ><img src="./assets/keli.jpg">
+                </v-avatar>
+              </v-btn>
+
+            </template>
+            <v-list >
+              <v-list-item
+                  @click="$router.push('/userspace')"
+              >
+                <v-list-item-title>个人中心</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                  @click="$router.push('/login')"
+              >
+                <v-list-item-title>注销</v-list-item-title>
+              </v-list-item>
+            </v-list>
+            <v-spacer></v-spacer>
+          </v-menu>
+
+        </v-row>
+      </v-responsive>
+    </v-app-bar>
+
+    <v-main>
+      <!--  -->
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import webTop from '@/components/webTop.vue';
-import NavMenu from '@/components/NavMenu.vue';
 export default {
   name:'index',
-  components: {
-    webTop,NavMenu,
-  },
-  data() {
-    return {
-      currentThis:this,
-      isCollapse:true,
-      text: '',
-      activeIndex: '/organizationManage',
-      sendData: [],
-    };
-  },
-  created() {
-
-  },
-  mounted() {
-    this.getNavMenus();
-    this.activeIndex = this.$route.path;
-  },
-  methods: {
-    handleSelect(key, keyPath) {
-      console.log(key);
-      console.log(keyPath);
+  data: () => ({
+    drawer: null,
+    selectedItem: 1,
+    person:{
+      name:'小刘'
     },
-    getNavMenus(){
-      this.isCollapse = false;
-      this.menuData = [{
-        "id": 1,
-        "name": "/organizationManage",
-        "label": "组织管理",
-        "icon": "el-icon-message",
-        "parentId": 0,
-      }, {
-        "id": 5,
-        "name": "/customerCenter",
-        "label": "用户中心",
-        "icon": "el-icon-message",
-        "parentId": 0,
-      }];
-      // let _this = this;
-      // _this.$ajax('post','/base/接口链接',{
-
-      // })
-      // .then(data => {
-      // 	if (data.code == 200) {
-      // 		this.menuData = data.data;
-      // 		this.isCollapse = false;
-      // 	}
-      // }, err => {})
-    },
-  }
-};
+    items: [
+      { text: 'Real-Time', icon: 'mdi-clock' },
+      { text: 'Audience', icon: 'mdi-account' },
+      { text: 'Conversions', icon: 'mdi-flag' },
+    ],
+  }),
+}
 </script>
-
-<style scoped>
-.left-nav {width: 230px;height: calc(100vh);position: fixed;left: 0;top: 0;z-index: 10;}
-.logo-div {width: 230px;height: 60px;text-align: center;background-color: #24292e;cursor: pointer;color: white;font-size: 30px;font-weight: bold;line-height: 60px;}
-.logo-div img {height: 100%;}
-.close-nav{width: 70px!important;transition: width .001s ease-in-out;}
-.close-nav>>>.el-submenu__title .el-submenu__icon-arrow,.close-nav>>>.el-submenu__title span{display: none;}
-.close-nav-logo{width: 100%;height: 100%;background-size: 60%;}
-.close-nav-logo:hover{background-color: rgb(0, 61, 82);}
-.el-menu-vertical-demo:not(.el-menu--collapse) {width: 200px;min-height: 400px;}
-.left-nav .nav .el-menu::-webkit-scrollbar{width: 10px;background-color: #24292e;position: relative;}
-.left-nav .nav .el-menu::-webkit-scrollbar-thumb{border-radius: 10px;background-color: #969689;}
-.web-container{position: absolute;top: 0;left: 0;width: 100%;height: 100%;padding-left: 230px;padding-top: 60px;background-color: #f1f1f1;}
-.web-container-closed{padding-left: 70px;}
-</style>
