@@ -4,13 +4,13 @@
         v-model="drawer"
         app
     >
-      <v-card
+      <v-sheet
           class="mx-auto"
           max-width="300"
           tile
       >
         <v-list flat>
-          <v-subheader>REPORTS</v-subheader>
+          <v-subheader>{{ typeofuser }}</v-subheader>
           <v-list-item-group
               v-model="selectedItem"
               color="primary"
@@ -22,27 +22,27 @@
               <v-list-item-icon>
                 <v-icon v-text="item.icon"></v-icon>
               </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
+              <v-list-item-content @click="$router.push(item.url)">
+                <v-list-item-title v-text="item.text" ></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
         </v-list>
-      </v-card>
+      </v-sheet>
       <!--  -->
     </v-navigation-drawer>
 
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title>环保应急管理系统</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-responsive max-width="260">
         <v-row style="padding: 12px">
 
           <span style="text-align: center;color:black;font-size: small;margin: 10px;font-family: Roboto,sans-serif;color: rgba(0,0,0,.6) !important">
-            欢迎，{{person.name}}
+            {{person.name}}
           </span>
           <v-menu
 
@@ -55,7 +55,7 @@
                       v-on="on" elevation="0" style="text-align: center;color:white;" @click="$router.push('/login')">
                 <v-avatar
                     size="40"
-                ><img src="./assets/keli.jpg">
+                ><img :src="img">
                 </v-avatar>
               </v-btn>
 
@@ -67,7 +67,7 @@
                 <v-list-item-title>个人中心</v-list-item-title>
               </v-list-item>
               <v-list-item
-                  @click="$router.push('/login')"
+                  @click="$router.push('/sign')"
               >
                 <v-list-item-title>注销</v-list-item-title>
               </v-list-item>
@@ -80,7 +80,7 @@
     </v-app-bar>
 
     <v-main>
-      <!--  -->
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
@@ -89,15 +89,27 @@
 export default {
   name:'index',
   data: () => ({
+    typeofuser:'专家模式',
+    img:require('./assets/keli.jpg'),
     drawer: null,
     selectedItem: 1,
     person:{
       name:'小刘'
     },
     items: [
-      { text: 'Real-Time', icon: 'mdi-clock' },
-      { text: 'Audience', icon: 'mdi-account' },
-      { text: 'Conversions', icon: 'mdi-flag' },
+      { text: '人员维护', icon: 'mdi-clock',url:'/renyuan'},
+      { text: '事件维护', icon: 'mdi-account',url:'/shijian' },
+      { text: '物资维护', icon: 'mdi-clock',url:'/wuzi'},
+      { text: '城市信息维护', icon: 'mdi-account',url:'/city' },
+      { text: '接报维护', icon: 'mdi-clock',url:'/jiebaowh'},
+      { text: '风险企业维护', icon: 'mdi-account',url:'/qiye' },
+      { text: '流程维护', icon: 'mdi-clock',url:'/liucheng'},
+      { text: '接报管理（指挥）', icon: 'mdi-account',url:'/jiebaoglzh' },
+      { text: '紧急事件处理', icon: 'mdi-account',url:'/jinji' },
+      { text: '接报管理（专家）', icon: 'mdi-account',url:'/jiebaoglzj' },
+
+
+
     ],
   }),
 }
