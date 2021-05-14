@@ -308,6 +308,7 @@
                 { text: '类型', value: 'style' },
                 { text: '类型编码', value: 'code' },
                 { text: '步骤', value: 'step'},
+                {text:'操作',value:'actions',sortable: false}
             ],
             desserts: [],
             editedIndex: -1,
