@@ -8,20 +8,18 @@
           <v-text-field
               label="相关内容搜索"
               outlined
-              v-model="input4"
+              v-model="search"
+              append-icon="mdi-magnify"
+              hide-details
           dense>
 
           </v-text-field>
         </v-col>
-        <v-col
-            style="padding-right: 0px;max-width: fit-content;max-height: fit-content">
-          <v-btn
-              elevation="0"
-          >搜索</v-btn>
-        </v-col>
+
         <v-col style="max-width: 150px">
           <v-select
-              :items="items"
+              v-model="auth_select"
+              :items="auth"
               label="选择权限"
               outlined
               dense
@@ -29,7 +27,8 @@
         </v-col>
         <v-col style="max-width: 150px">
           <v-select
-              :items="items"
+              v-model="auth_select"
+              :items="stateconst"
               label="账号状态"
               outlined
               dense
@@ -85,6 +84,11 @@
             </v-date-picker>
           </v-menu>
         </v-col>
+        <v-col>
+          <v-btn color="primary">
+            搜索
+          </v-btn>
+        </v-col>
         <v-spacer></v-spacer>
         <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
           <v-col style="max-width: fit-content;max-height: fit-content">
@@ -108,76 +112,70 @@
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline">User Profile</span>
+                    <span class="headline">新增用户</span>
                   </v-card-title>
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                        <v-form
+                            ref="form"
+                            v-model="valid"
+                            lazy-validation
                         >
                           <v-text-field
-                              label="Legal first name*"
+                              v-model="name"
+                              :counter="10"
+                              :rules="nameRules"
+                              label="Name"
                               required
                           ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
+
                           <v-text-field
-                              label="Legal middle name"
-                              hint="example of helper text only on focus"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              label="Legal last name*"
-                              hint="example of persistent helper text"
-                              persistent-hint
+                              v-model="email"
+                              :rules="emailRules"
+                              label="E-mail"
                               required
                           ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              label="Email*"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              label="Password*"
-                              type="password"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                        >
+
                           <v-select
-                              :items="['0-17', '18-29', '30-54', '54+']"
-                              label="Age*"
+                              v-model="select"
+                              :items="items"
+                              :rules="[v => !!v || 'Item is required']"
+                              label="Item"
                               required
                           ></v-select>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                        >
-                          <v-autocomplete
-                              :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                              label="Interests"
-                              multiple
-                          ></v-autocomplete>
-                        </v-col>
+
+                          <v-checkbox
+                              v-model="checkbox"
+                              :rules="[v => !!v || 'You must agree to continue!']"
+                              label="Do you agree?"
+                              required
+                          ></v-checkbox>
+
+                          <v-btn
+                              :disabled="!valid"
+                              color="success"
+                              class="mr-4"
+                              @click="validate"
+                          >
+                            Validate
+                          </v-btn>
+
+                          <v-btn
+                              color="error"
+                              class="mr-4"
+                              @click="reset"
+                          >
+                            Reset Form
+                          </v-btn>
+
+                          <v-btn
+                              color="warning"
+                              @click="resetValidation"
+                          >
+                            Reset Validation
+                          </v-btn>
+                        </v-form>
                       </v-row>
                     </v-container>
                     <small>*indicates required field</small>
@@ -209,17 +207,16 @@
       </v-row>
       <v-row>
         <v-data-table
+            v-model="selected"
             :headers="headers"
             :items="desserts"
             sort-by="calories"
             class="elevation-0"
             style="min-width: 100%"
             show-select
+            :search="search"
         >
-
           <template v-slot:top>
-
-
               <v-divider
                   class="mx-4"
                   inset
@@ -356,27 +353,49 @@
 </template>
 
 <script>
+
 export default {
   name: "renyuan",
   data: () => ({
+    valid: true,
+    name: '',
+    nameRules: [
+      v => !!v || 'Name is required',
+      v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+    ],
+    email: '',
+    emailRules: [
+      v => !!v || 'E-mail is required',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    ],
+    select: null,
+    items: [    //dia
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4',
+    ],
+    checkbox: false,
+    auth:['工作人员','指挥人员','专家人员'],
+    stateconst:['正常','停用'],
+    selected: [],
+    search:'',
+    auth_select:'',
+    state_select:'',
     date: ['', ''],
     dialog: false,
     dialognewperson:false,
     dialogDelete: false,
     headers: [
-      {
-        text: 'ID',
-        align: 'start',
-        value: 'id',
-      },
-      { text: '账号', value: 'number' },
+      {text: 'ID', align: 'start',value: 'id',},
+      { text: '账号', value: 'username' },
       { text: '密码', value: 'password' },
       { text: '姓名', value: 'name' },
       { text: '性别', value: 'sex' },
       { text: '出生日期', value: 'birthday'},
-      { text: '人员编号', value: 'personid'},
-      { text: '人员类型', value: 'persontype'},
-      { text: '账号状态', value: 'status'},
+      { text: '人员编号', value: 'num'},
+      { text: '人员类型', value: 'auth_manage'},
+      { text: '账号状态', value: 'state'},
       { text: '操作', value: 'actions', sortable: false },
     ],
     desserts: [],
@@ -421,78 +440,89 @@ export default {
     initialize () {
       this.desserts = [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
+          id:'8',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
+          id:'9',
+          name:'tom',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
+          id:'10',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
+          id:'11',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
+          id:'12',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
+          id:'13',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          name:'tom',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
+          id:'14',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          name:'tom',
+          state:'正常',
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
+
+
       ]
     },
-
+    validate () {
+      return this.$refs.form.validate()
+    },
     editItem (item) {
       this.editedIndex = this.desserts.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -527,7 +557,7 @@ export default {
     },
 
     save () {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > -1&&this.validate()) {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
       } else {
         this.desserts.push(this.editedItem)
