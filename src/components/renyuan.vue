@@ -122,79 +122,136 @@
                             v-model="valid"
                             lazy-validation
                         >
-                          <v-text-field
-                              v-model="name"
-                              :counter="10"
-                              :rules="nameRules"
-                              label="Name"
-                              required
-                          ></v-text-field>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="name"
+                                  :counter="10"
+                                  :rules="nameRules"
+                                  label="姓名"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                  v-model="email"
+                                  :rules="emailRules"
+                                  label="账号"
+                                  required
+                              ></v-text-field>
+                            </v-col>
 
-                          <v-text-field
-                              v-model="email"
-                              :rules="emailRules"
-                              label="E-mail"
-                              required
-                          ></v-text-field>
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="password"
+                                  :counter="16"
+                                  :rules="passwordRules"
+                                  label="密码"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col
 
-                          <v-select
-                              v-model="select"
-                              :items="items"
-                              :rules="[v => !!v || 'Item is required']"
-                              label="Item"
-                              required
-                          ></v-select>
+                            >
+                              <v-menu
+                                  v-model="regmenu"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                      v-model="regdate"
+                                      label="Picker in menu"
+                                      prepend-icon="mdi-calendar"
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="regdate"
+                                    no-title
+                                    scrollable
+                                    @input="regmenu=false"
+                                >
 
-                          <v-checkbox
-                              v-model="checkbox"
-                              :rules="[v => !!v || 'You must agree to continue!']"
-                              label="Do you agree?"
-                              required
-                          ></v-checkbox>
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
 
-                          <v-btn
-                              :disabled="!valid"
-                              color="success"
-                              class="mr-4"
-                              @click="validate"
-                          >
-                            Validate
-                          </v-btn>
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-select
+                                  v-model="userselect"
+                                  :items="useritems"
+                                  :rules="[v => !!v || '请选择用户类型']"
+                                  label="用户类型"
+                                  required
+                              ></v-select>
+                            </v-col>
+                            <v-col>
+                              <v-select
+                                  v-model="sexselect"
+                                  :items="sexitems"
+                                  :rules="[v => !!v || '请选择性别']"
+                                  label="性别"
+                                  required
+                              ></v-select>
+                            </v-col>
 
-                          <v-btn
-                              color="error"
-                              class="mr-4"
-                              @click="reset"
-                          >
-                            Reset Form
-                          </v-btn>
+                          </v-row>
 
-                          <v-btn
-                              color="warning"
-                              @click="resetValidation"
-                          >
-                            Reset Validation
-                          </v-btn>
+
+
+<!--                          <v-btn-->
+<!--                              :disabled="!valid"-->
+<!--                              color="success"-->
+<!--                              class="mr-4"-->
+<!--                              @click="validate"-->
+<!--                          >-->
+<!--                            Validate-->
+<!--                          </v-btn>-->
+
+<!--                          <v-btn-->
+<!--                              color="error"-->
+<!--                              class="mr-4"-->
+<!--                              @click="reset"-->
+<!--                          >-->
+<!--                            Reset Form-->
+<!--                          </v-btn>-->
+
+<!--                          <v-btn-->
+<!--                              color="warning"-->
+<!--                              @click="resetValidation"-->
+<!--                          >-->
+<!--                            Reset Validation-->
+<!--                          </v-btn>-->
                         </v-form>
                       </v-row>
                     </v-container>
-                    <small>*indicates required field</small>
+
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="blue darken-1"
                         text
-                        @click="dialognewperson = false"
+                        @click="dialognewperson = false&&reset"
                     >
-                      Close
+                      关闭
                     </v-btn>
                     <v-btn
                         color="blue darken-1"
                         text
                         @click="dialognewperson = false"
                     >
-                      Save
+                      保存
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -210,12 +267,20 @@
             v-model="selected"
             :headers="headers"
             :items="desserts"
-            sort-by="calories"
+            sort-by="id"
             class="elevation-0"
             style="min-width: 100%"
             show-select
             :search="search"
         >
+          <template v-slot:item.state="{ item }">
+            <v-chip
+                :color="getColor(item.state)"
+                dark
+            >
+              {{ userstatef(item.state) }}
+            </v-chip>
+          </template>
           <template v-slot:top>
               <v-divider
                   class="mx-4"
@@ -225,85 +290,129 @@
               <v-spacer></v-spacer>
               <v-dialog
                   v-model="dialog"
-                  max-width="1000px"
+                  max-width="500px"
               >
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
+                    <v-switch
+                        v-model="editedItem.state"
+                        :label="`账号状态: ${userstatef(editedItem.state).toString()}`"
+                    ></v-switch>
                   </v-card-title>
-
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                        <v-form
+                            ref="form"
+                            v-model="valid"
+                            lazy-validation
                         >
-                          <v-text-field
-                              v-model="editedItem.name"
-                              label="Dessert name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.calories"
-                              label="Calories"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.fat"
-                              label="Fat (g)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.carbs"
-                              label="Carbs (g)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.protein"
-                              label="Protein (g)"
-                          ></v-text-field>
-                        </v-col>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.name"
+                                  :counter="10"
+                                  :rules="nameRules"
+                                  label="姓名"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.username"
+                                  :rules="emailRules"
+                                  label="账号"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.password"
+                                  :counter="16"
+                                  :rules="passwordRules"
+                                  label="密码"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col
+
+                            >
+                              <v-menu
+                                  v-model="regmenu"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                      v-model="editedItem.birthday"
+                                      label="Picker in menu"
+                                      prepend-icon="mdi-calendar"
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="regdate"
+                                    no-title
+                                    scrollable
+                                    @input="regmenu=false"
+                                >
+
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-select
+                                  v-model="editedItem.auth_manage"
+                                  :items="useritems"
+                                  :rules="[v => !!v || '请选择用户类型']"
+                                  label="用户类型"
+                                  required
+                              ></v-select>
+                            </v-col>
+                            <v-col>
+                              <v-select
+                                  v-model="editedItem.sex"
+                                  :items="sexitems"
+                                  :rules="[v => !!v || '请选择性别']"
+                                  label="性别"
+                                  required
+                              ></v-select>
+                            </v-col>
+
+                          </v-row>
+
+                        </v-form>
                       </v-row>
                     </v-container>
-                  </v-card-text>
 
+                  </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="blue darken-1"
                         text
-                        @click="close"
+                        @click="dialog = false&&reset"
                     >
-                      Cancel
+                      关闭
                     </v-btn>
                     <v-btn
                         color="blue darken-1"
                         text
                         @click="save"
                     >
-                      Save
+                      保存
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -357,23 +466,37 @@
 export default {
   name: "renyuan",
   data: () => ({
+    regdate: new Date().toISOString().substr(0, 10),
+    userstate:false,
+    regmenu: false,
     valid: true,
     name: '',
     nameRules: [
-      v => !!v || 'Name is required',
-      v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+      v => !!v || '姓名是需要的',
+      v => (v && v.length <= 10) || '姓名必须小于十个字符',
     ],
     email: '',
     emailRules: [
-      v => !!v || 'E-mail is required',
-      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      v => !!v || '请填写账号',
+      v =>/[0-9a-zA-Z]/.test(v) || '账号只能是字母和数字',
+      v => (v && v.length <= 10) || '账号必须小于10个字符',
     ],
-    select: null,
-    items: [    //dia
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4',
+    password: '',
+    passwordRules: [
+      v => !!v || '请填写密码',
+      v =>/[0-9a-zA-Z]/.test(v) || '密码只能是字母和数字',
+      v => (v && v.length <= 10) || '密码必须小于16个字符',
+    ],
+    userselect: null,
+    useritems: [    //dia
+      '工作人员',
+      '指挥人员',
+      '专家人员',
+    ],
+    sexselect: null,
+    sexitems: [    //dia
+      '男',
+      '女',
     ],
     checkbox: false,
     auth:['工作人员','指挥人员','专家人员'],
@@ -401,18 +524,26 @@ export default {
     desserts: [],
     editedIndex: -1,
     editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      id:'',
+      username:'',
+      password:'',
+      name:'',
+      auth_manage:'',
+      state:true,
+      sex:'',
+      birthday:'',
+      num:'',
     },
     defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      id:'',
+      username:'',
+      password:'',
+      name:'',
+      auth_manage:'',
+      state:'',
+      sex:'',
+      birthday:'',
+      num:'',
     },
   }),
   computed: {
@@ -420,8 +551,9 @@ export default {
       return this.date.join(' ~ ')
     },
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? '新增用户' : '修改用户信息'
     },
+
   },
 
   watch: {
@@ -437,6 +569,14 @@ export default {
     this.initialize()
   },
   methods: {
+    getColor (item) {
+      if (item === false) return 'red'
+      else  return 'green'
+
+    },
+    userstatef (item) {
+      return item === true ? '正常' : '停用'
+    },
     initialize () {
       this.desserts = [
         {
@@ -445,7 +585,7 @@ export default {
           password:'123',
           name:'tom',
           auth_manage:'工作人员',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -456,7 +596,7 @@ export default {
           username:'123',
           password:'123',
           auth_manage:'工作人员',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -467,7 +607,7 @@ export default {
           password:'123',
           name:'tom',
           auth_manage:'工作人员',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -478,7 +618,7 @@ export default {
           password:'123',
           name:'tom',
           auth_manage:'工作人员',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -489,7 +629,7 @@ export default {
           password:'123',
           name:'tom',
           auth_manage:'工作人员',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -500,7 +640,7 @@ export default {
           password:'123',
           auth_manage:'工作人员',
           name:'tom',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -511,7 +651,7 @@ export default {
           password:'123',
           auth_manage:'工作人员',
           name:'tom',
-          state:'正常',
+          state:true,
           sex:'男',
           birthday:'1999-12-16',
           num:'002',
@@ -519,6 +659,9 @@ export default {
 
 
       ]
+    },
+    reset () {
+      this.$refs.form.reset()
     },
     validate () {
       return this.$refs.form.validate()
@@ -557,13 +700,16 @@ export default {
     },
 
     save () {
-      if (this.editedIndex > -1&&this.validate()) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        this.desserts.push(this.editedItem)
+      if (this.validate()){
+        if (this.editedIndex > -1) {
+          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        } else {
+          this.desserts.push(this.editedItem)
+        }
+        this.close()
       }
-      this.close()
-    },
+      }
+
   },
 }
 </script>
