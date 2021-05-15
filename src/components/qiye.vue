@@ -8,15 +8,10 @@
                     <v-text-field
                             label="企业名称搜索"
                             outlined
-                            v-model="input4"
+                            v-model="search"
+                            append-icon="mdi-magnify"
                             dense>
                     </v-text-field>
-                </v-col>
-                <v-col
-                        style="padding-right: 10px;max-width: fit-content;max-height: fit-content">
-                    <v-btn
-                            elevation="0"
-                    >搜索</v-btn>
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
@@ -50,7 +45,6 @@
                                                     cols="12"
                                                     sm="6"
                                                     md="4"
-
                                             >
                                                 <v-text-field
                                                         label="风险企业名称*"
@@ -148,6 +142,7 @@
                 <v-data-table
                         :headers="headers"
                         :items="company"
+                        :search="search"
                         sort-by="calories"
                         class="elevation-0"
                         style="min-width: 100%"
@@ -300,6 +295,7 @@
     export default {
         name: "renyuan",
         data: () => ({
+            search:'',
             date: ['', ''],
             dialog: false,
             dialognewperson:false,
@@ -363,101 +359,101 @@
                 this.company = [
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                     {
                         name: '东软',
-                        position: 0,
-                        location: 0,
-                        lawperson: 0,
-                        telephone: 0,
-                        type:0,
+                        position: '地址',
+                        location: '(128.15,128.15)',
+                        lawperson: '东软法人',
+                        telephone: '15145565654',
+                        type:'软件企业',
                     },
                 ]
             },
 
             editItem (item) {
-                this.editedIndex = this.desserts.indexOf(item)
+                this.editedIndex = this.company.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
 
             deleteItem (item) {
-                this.editedIndex = this.desserts.indexOf(item)
+                this.editedIndex = this.company.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialogDelete = true
             },
 
             deleteItemConfirm () {
-                this.desserts.splice(this.editedIndex, 1)
+                this.company.splice(this.editedIndex, 1)
                 this.closeDelete()
             },
 
@@ -479,9 +475,9 @@
 
             save () {
                 if (this.editedIndex > -1) {
-                    Object.assign(this.desserts[this.editedIndex], this.editedItem)
+                    Object.assign(this.company[this.editedIndex], this.editedItem)
                 } else {
-                    this.desserts.push(this.editedItem)
+                    this.company.push(this.editedItem)
                 }
                 this.close()
             },

@@ -4,34 +4,42 @@
             <h1>流程维护</h1>
             <v-divider></v-divider>
             <v-row style="margin-top: 30px">
-                <v-col>
+                <v-col cols="12"
+                       md="4">
                     <v-text-field
                             label="流程名称搜索"
                             outlined
-                            v-model="input4"
+                            v-model="search"
+                            append-icon="mdi-magnify"
                             dense>
                     </v-text-field>
                 </v-col>
-                <v-col
-                        style="padding-right: 10px;max-width: fit-content;max-height: fit-content">
+                <v-col style="padding-right: 0px"cols="12"
+                       md="4">
+                    <treeselect v-model="value"
+                                :disableBranchNodes="true"
+                                :multiple="false"
+                                :options="options"
+                                :flat="true"
+                                :sort-value-by="sortValueBy"
+                                :default-expand-level="1"
+                        placeholder="选择流程类型"
+                    >
+                        <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                    </treeselect>
+                    <treeselect-value :value="value"></treeselect-value>
+                </v-col>
+                <v-col>
                     <v-btn
                             elevation="0"
-                    >搜索</v-btn>
+                            @click="getdatatype"
+                    >筛选</v-btn>
                 </v-col>
-                <v-col style="padding-left: 50px;max-width: 200px">
-                    <v-select
-                            :items="items"
-                            label="选择流程类型"
-                            outlined
-                            dense
-                    ></v-select>
-                </v-col>
-
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-btn>批量删除</v-btn>
-                    </v-col>
+                    </v-col><!--至此第一行结束-->
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-dialog
                                 v-model="dialognewperson"
@@ -55,70 +63,38 @@
                                 <v-card-text>
                                     <v-container>
                                         <v-row>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12"
+                                                   sm="6"
                                             >
                                                 <v-text-field
-                                                        label="Legal first name*"
-                                                        required
-                                                ></v-text-field>
+                                                        label="流程名称"
+                                                        outlined
+                                                        dense>
+                                                </v-text-field>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12"
+                                                sm="6"
+                                            >
+                                                <treeselect v-model="value"
+                                                            :disableBranchNodes="true"
+                                                            :multiple="false"
+                                                            :options="options"
+                                                            :flat="true"
+                                                            :sort-value-by="sortValueBy"
+                                                            :default-expand-level="1"
+                                                            placeholder="选择流程类型"
+                                                >
+                                                    <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                                                </treeselect>
+                                                <treeselect-value :value="value"></treeselect-value>
+                                            </v-col>
+                                            <v-col cols="12"
+                                                   sm="9"
                                             >
                                                 <v-text-field
-                                                        label="Legal middle name"
-                                                        hint="example of helper text only on focus"
-                                                ></v-text-field>
-                                            </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
-                                            >
-                                                <v-text-field
-                                                        label="Legal last name*"
-                                                        hint="example of persistent helper text"
-                                                        persistent-hint
+                                                        label="流程步骤*"
                                                         required
                                                 ></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field
-                                                        label="Email*"
-                                                        required
-                                                ></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field
-                                                        label="Password*"
-                                                        type="password"
-                                                        required
-                                                ></v-text-field>
-                                            </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                            >
-                                                <v-select
-                                                        :items="['0-17', '18-29', '30-54', '54+']"
-                                                        label="Age*"
-                                                        required
-                                                ></v-select>
-                                            </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                            >
-                                                <v-autocomplete
-                                                        :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                                                        label="Interests"
-                                                        multiple
-                                                ></v-autocomplete>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -131,25 +107,26 @@
                                             text
                                             @click="dialognewperson = false"
                                     >
-                                        Save
+                                        新增
                                     </v-btn>
                                     <v-btn
                                             color="black"
                                             text
                                             @click="dialognewperson = false"
                                     >
-                                        Cancel
+                                        取消
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
-                        </v-dialog>
+                        </v-dialog><!--至此新增dialog结束-->
                     </v-col>
                 </v-row>
             </v-row>
-            <v-row>
+            <v-row><!--以下开始画表格-->
                 <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :search="search"
                         sort-by="calories"
                         class="elevation-0"
                         style="min-width: 100%"
@@ -161,7 +138,7 @@
                                 inset
                                 vertical
                         ></v-divider>
-                        <v-spacer></v-spacer>
+                        <v-spacer></v-spacer><!--以下为修改删除弹框-->
                         <v-dialog
                                 v-model="dialog"
                                 max-width="1000px"
@@ -291,13 +268,60 @@
 </template>
 
 <script>
+    //import the component
+    import Treeselect from '@riophae/vue-treeselect'
+    // import the styles
+    import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
+        components: { Treeselect },
         name: "renyuan",
         data: () => ({
+            liuchengtype:'',
+            search:'',
             date: ['', ''],
             dialog: false,
             dialognewperson:false,
             dialogDelete: false,
+            //options: generateOptions(3),
+            sortValueBy: 'ORDER_SELECTED',
+            value: null,
+            // define options
+            options: [ {
+                id: '自然灾害',
+                label: '自然灾害',
+                children: [ {
+                    id: '水旱灾害',
+                    label: '水旱灾害',
+                    children:[
+                        {
+                            id:'自然灾害水旱灾害一级',
+                            label:"一级",
+                            customLabel: `自然灾害水旱灾害一级`,
+
+                        },
+                        {
+                            id:'自然灾害水旱灾害二级',
+                            label:'二级',
+                            customLabel: `自然灾害水旱灾害二级`,
+                        },
+                    ]
+                }, {
+                    id: '火灾',
+                    label: '火灾',
+                    children:[
+                        {
+                            id:'自然灾害火灾一级',
+                            label:'一级',
+                            customLabel: `自然灾害火灾一级`,
+                        },
+                        {
+                            id:'自然灾害火灾二级',
+                            label:'二级',
+                            customLabel: `自然灾害火灾二级`,
+                        },
+                    ]
+                } ],
+            },],
             headers: [
                 {
                     text: 'ID',
@@ -349,6 +373,18 @@
             this.initialize()
         },
         methods: {
+            getdatatype() {
+                this.liuchengtype=''
+                for (var i =0;i<this.value.length;i++) {
+                    var liucheng
+                    liucheng=this.value[i]
+                    for(var key in liucheng){
+                        this.liuchengtype+=liucheng[key]
+                    }
+                }
+                console.log(this.liuchengtype)
+                console.log(123)
+            },
             initialize () {
                 this.desserts = [
                     {
@@ -465,7 +501,7 @@
                 }
                 this.close()
             },
-        },
+        }
     }
 </script>
 
