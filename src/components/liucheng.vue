@@ -58,7 +58,7 @@
                             </template>
                             <v-card>
                                 <v-card-title>
-                                    <span class="headline">User Profile</span>
+                                    <span class="headline">新增流程</span>
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container>
@@ -75,7 +75,7 @@
                                             <v-col cols="12"
                                                 sm="6"
                                             >
-                                                <treeselect v-model="value"
+                                                <treeselect v-model="addvalue"
                                                             :disableBranchNodes="true"
                                                             :multiple="false"
                                                             :options="options"
@@ -86,19 +86,42 @@
                                                 >
                                                     <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
                                                 </treeselect>
-                                                <treeselect-value :value="value"></treeselect-value>
+                                                <treeselect-value :value="addvalue"></treeselect-value>
                                             </v-col>
-                                            <v-col cols="12"
-                                                   sm="9"
+                                            <v-col cols="15"
                                             >
-                                                <v-text-field
-                                                        label="流程步骤*"
-                                                        required
-                                                ></v-text-field>
+                                                <h3 style="padding-left: 17px">步骤</h3>
+                                                <v-simple-table>
+                                                    <template v-slot:default>
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="elevation-3" width="3">
+                                                                步骤序号:
+                                                            </th>
+                                                            <th class="elevation-3" width="12">
+                                                                步骤内容:
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr v-for="item in step" :key="item.id">
+                                                            <td><v-text-field
+                                                                    v-model="item.id"
+                                                                    :readonly="item.readonly"
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                            <td><v-text-field
+                                                                    v-model="item.content"
+                                                                    :readonly="item.readonly"
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </template>
+                                                </v-simple-table>
                                             </v-col>
                                         </v-row>
                                     </v-container>
-                                    <small>*indicates required field</small>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -285,6 +308,7 @@
             //options: generateOptions(3),
             sortValueBy: 'ORDER_SELECTED',
             value: null,
+            addvalue:null,
             // define options
             options: [ {
                 id: '自然灾害',
@@ -338,10 +362,9 @@
             editedIndex: -1,
             editedItem: {
                 name: '',
-                calories: 0,
-                fat: 0,
-                carbs: 0,
-                protein: 0,
+                style: 0,
+                code: 0,
+                step: 0,
             },
             defaultItem: {
                 name: '',
@@ -350,6 +373,17 @@
                 carbs: 0,
                 protein: 0,
             },
+            step:[{
+                id:0,
+                content:"第一步"
+            },{
+                id:1,
+                content:"第二步"
+            },{
+                id:2,
+                content:"第三步"
+            },
+            ]
         }),
         computed: {
             dateRangeText () {
@@ -388,74 +422,64 @@
             initialize () {
                 this.desserts = [
                     {
-                        name: 'Frozen Yogurt',
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Ice cream sandwich',
-                        calories: 237,
-                        fat: 9.0,
-                        carbs: 37,
-                        protein: 4.3,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Eclair',
-                        calories: 262,
-                        fat: 16.0,
-                        carbs: 23,
-                        protein: 6.0,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Cupcake',
-                        calories: 305,
-                        fat: 3.7,
-                        carbs: 67,
-                        protein: 4.3,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Gingerbread',
-                        calories: 356,
-                        fat: 16.0,
-                        carbs: 49,
-                        protein: 3.9,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Jelly bean',
-                        calories: 375,
-                        fat: 0.0,
-                        carbs: 94,
-                        protein: 0.0,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Lollipop',
-                        calories: 392,
-                        fat: 0.2,
-                        carbs: 98,
-                        protein: 0,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Honeycomb',
-                        calories: 408,
-                        fat: 3.2,
-                        carbs: 87,
-                        protein: 6.5,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Donut',
-                        calories: 452,
-                        fat: 25.0,
-                        carbs: 51,
-                        protein: 4.9,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'KitKat',
-                        calories: 518,
-                        fat: 26.0,
-                        carbs: 65,
-                        protein: 7,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                 ]
             },
