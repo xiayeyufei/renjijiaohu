@@ -88,10 +88,22 @@
                                                 </treeselect>
                                                 <treeselect-value :value="addvalue"></treeselect-value>
                                             </v-col>
-                                            <v-col cols="15"
+                                            <v-col cols="12" sm="6"
                                             >
-                                                <h3 style="padding-left: 17px; margin-bottom: 5px">步骤</h3>
-                                                <v-divider dark color="black"></v-divider>
+                                                <h3 style="padding-left: 17px;padding-top: 15px"
+                                                color="black">步骤</h3>
+                                            </v-col>
+                                            <v-col cols="12"  sm="6" style="padding-left: 20%"
+                                            >
+                                                <v-btn @click="addsteps"
+                                                >
+                                                    新增步骤
+                                                </v-btn>
+                                            </v-col>
+                                            <v-col cols="12"  sm="12">
+                                            <v-divider></v-divider>
+                                            </v-col>
+                                            <v-col>
                                                 <v-simple-table>
                                                     <template v-slot:default>
                                                         <thead>
@@ -191,7 +203,7 @@
                                             >
                                                 <v-text-field
                                                         v-model="editedItem.name"
-                                                        label="Dessert name"
+                                                        label="流程名称"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -200,8 +212,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.calories"
-                                                        label="Calories"
+                                                        v-model="editedItem.style"
+                                                        label="流程类型"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -210,8 +222,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.fat"
-                                                        label="Fat (g)"
+                                                        v-model="editedItem.code"
+                                                        label="流程编码"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -220,8 +232,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.carbs"
-                                                        label="Carbs (g)"
+                                                        v-model="editedItem.step"
+                                                        label="步骤"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -384,16 +396,16 @@
                 protein: 0,
             },
             step:[{
-                id:0,
-                content:"第一步",
-                readonly:true
-            },{
                 id:1,
-                content:"第二步",
+                content:"第1步",
                 readonly:true
             },{
                 id:2,
-                content:"第三步",
+                content:"第2步",
+                readonly:true
+            },{
+                id:3,
+                content:"第3步",
                 readonly:true
             },
             ],
@@ -441,60 +453,70 @@
             initialize () {
                 this.desserts = [
                     {
+                        id:1,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:2,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:3,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:4,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:5,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:6,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:7,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:8,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:9,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
                         step: "1  2  3",
                     },
                     {
+                        id:10,
                         name: '森林大火',
                         style: "自然灾害火灾一级",
                         code: "154",
@@ -564,6 +586,15 @@
                     this.addstepIndex = -1;//把索引标志置空
                 })
             },
+            //增加
+            addsteps(){
+                var a=this.step.length+1
+                this.step.push({
+                    id:a,
+                    content:"第"+a+"步",
+                    readonly:true
+                })
+            }
         }
     }
 </script>
