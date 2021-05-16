@@ -90,31 +90,41 @@
                                             </v-col>
                                             <v-col cols="15"
                                             >
-                                                <h3 style="padding-left: 17px">步骤</h3>
+                                                <h3 style="padding-left: 17px; margin-bottom: 5px">步骤</h3>
+                                                <v-divider dark color="black"></v-divider>
                                                 <v-simple-table>
                                                     <template v-slot:default>
                                                         <thead>
                                                         <tr>
-                                                            <th class="elevation-3" width="3">
-                                                                步骤序号:
+                                                            <th class="text--accent-1" width="3">
+                                                                步骤序号
                                                             </th>
-                                                            <th class="elevation-3" width="12">
-                                                                步骤内容:
+                                                            <th class="text--accent-1" width="12">
+                                                                步骤内容
                                                             </th>
+                                                            <th class="text--accent-1">操作</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <tr v-for="item in step" :key="item.id">
-                                                            <td><v-text-field
-                                                                    v-model="item.id"
-                                                                    :readonly="item.readonly"
+                                                        <tr v-for="item1 in step" :key="item1.id">
+                                                            <td width="5px"><v-text-field
+                                                                    v-model="item1.id"
+                                                                    :readonly=true
                                                                     autofocus
                                                             ></v-text-field></td>
                                                             <td><v-text-field
-                                                                    v-model="item.content"
-                                                                    :readonly="item.readonly"
+                                                                    v-model="item1.content"
+                                                                    :readonly="item1.readonly"
                                                                     autofocus
                                                             ></v-text-field></td>
+                                                            <td width="15px">
+                                                                <!-- 非修改界面显示修改，修改界面显示保存 -->
+                                                                <v-btn rounded color="primary" dark @click="editstep(item1)" small>{{ item1.readonly? "修改":"保存" }}</v-btn>
+                                                                <!-- 非修改界面显示删除 -->
+                                                                <v-btn rounded color="error" dark small v-if="item1.readonly" @click="delstep(item1)">删除</v-btn>
+                                                                <!-- 修改界面显示取消 -->
+                                                                <v-btn rounded color="success" dark small v-if="!item1.readonly" @click="cancelstep(item1)">取消</v-btn>
+                                                            </td>
                                                         </tr>
                                                         </tbody>
                                                     </template>
@@ -375,15 +385,24 @@
             },
             step:[{
                 id:0,
-                content:"第一步"
+                content:"第一步",
+                readonly:true
             },{
                 id:1,
-                content:"第二步"
+                content:"第二步",
+                readonly:true
             },{
                 id:2,
-                content:"第三步"
+                content:"第三步",
+                readonly:true
             },
-            ]
+            ],
+            addstep: {
+                id:0,
+                content:"",
+                readonly:true
+            },
+            addstepIndex: -1,
         }),
         computed: {
             dateRangeText () {
@@ -524,6 +543,26 @@
                     this.desserts.push(this.editedItem)
                 }
                 this.close()
+            },
+            // 修改数据（保存数据）
+            editstep(item1) {
+                this.addstepIndex = this.step.indexOf(item1);//先找到desserts数组里面对应的索引，通俗点说就是确定修改哪一行数据
+                this.addstep = Object.assign({}, item1);//把未修改之前的值存到editedItem对象里面，方便用户取消修改
+                //以上两行主要是为取消修改服务，要实现修改其实只需下面一行就够了，因为html中本身的标签为<v-text-field>,也就是说只需控制它的只读和非只读来回切换即可做到修改保存
+                item1.readonly = !item1.readonly;
+            },
+            // 删除数据
+            delstep(item1) {
+                const index = this.step.indexOf(item1);//找到desserts数组里面对应的索引，通俗点说就是确定删除哪一行数据
+                confirm('确定要删除这一步骤吗?') && this.step.splice(index, 1);//系统弹出确认框，点击确定就是删除这一行数据
+            },
+            // 取消
+            cancelstep(item1) {
+                item1.readonly = !item1.readonly;//切换文本框的读写状态
+                this.$nextTick(() =>{
+                    Object.assign(this.step[this.addstepIndex], this.addstep);//点击取消之后，把未修改之前的数据还原到desserts数组
+                    this.addstepIndex = -1;//把索引标志置空
+                })
             },
         }
     }
