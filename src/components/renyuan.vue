@@ -8,20 +8,18 @@
           <v-text-field
               label="相关内容搜索"
               outlined
-              v-model="input4"
+              v-model="search"
+              append-icon="mdi-magnify"
+              hide-details
           dense>
 
           </v-text-field>
         </v-col>
-        <v-col
-            style="padding-right: 0px;max-width: fit-content;max-height: fit-content">
-          <v-btn
-              elevation="0"
-          >搜索</v-btn>
-        </v-col>
+
         <v-col style="max-width: 150px">
           <v-select
-              :items="items"
+              v-model="auth_select"
+              :items="auth"
               label="选择权限"
               outlined
               dense
@@ -29,7 +27,8 @@
         </v-col>
         <v-col style="max-width: 150px">
           <v-select
-              :items="items"
+              v-model="auth_select"
+              :items="stateconst"
               label="账号状态"
               outlined
               dense
@@ -85,6 +84,11 @@
             </v-date-picker>
           </v-menu>
         </v-col>
+        <v-col>
+          <v-btn color="primary">
+            搜索
+          </v-btn>
+        </v-col>
         <v-spacer></v-spacer>
         <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
           <v-col style="max-width: fit-content;max-height: fit-content">
@@ -108,95 +112,146 @@
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline">User Profile</span>
+                    <span class="headline">新增用户</span>
                   </v-card-title>
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                        <v-form
+                            ref="form"
+                            v-model="valid"
+                            lazy-validation
                         >
-                          <v-text-field
-                              label="Legal first name*"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              label="Legal middle name"
-                              hint="example of helper text only on focus"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              label="Legal last name*"
-                              hint="example of persistent helper text"
-                              persistent-hint
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              label="Email*"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                              label="Password*"
-                              type="password"
-                              required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                        >
-                          <v-select
-                              :items="['0-17', '18-29', '30-54', '54+']"
-                              label="Age*"
-                              required
-                          ></v-select>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                        >
-                          <v-autocomplete
-                              :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                              label="Interests"
-                              multiple
-                          ></v-autocomplete>
-                        </v-col>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="name"
+                                  :counter="10"
+                                  :rules="nameRules"
+                                  label="姓名"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                  v-model="email"
+                                  :rules="emailRules"
+                                  label="账号"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="password"
+                                  :counter="16"
+                                  :rules="passwordRules"
+                                  label="密码"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col
+
+                            >
+                              <v-menu
+                                  v-model="regmenu"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                      v-model="regdate"
+                                      label="Picker in menu"
+                                      prepend-icon="mdi-calendar"
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="regdate"
+                                    no-title
+                                    scrollable
+                                    @input="regmenu=false"
+                                >
+
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-select
+                                  v-model="userselect"
+                                  :items="useritems"
+                                  :rules="[v => !!v || '请选择用户类型']"
+                                  label="用户类型"
+                                  required
+                              ></v-select>
+                            </v-col>
+                            <v-col>
+                              <v-select
+                                  v-model="sexselect"
+                                  :items="sexitems"
+                                  :rules="[v => !!v || '请选择性别']"
+                                  label="性别"
+                                  required
+                              ></v-select>
+                            </v-col>
+
+                          </v-row>
+
+
+
+<!--                          <v-btn-->
+<!--                              :disabled="!valid"-->
+<!--                              color="success"-->
+<!--                              class="mr-4"-->
+<!--                              @click="validate"-->
+<!--                          >-->
+<!--                            Validate-->
+<!--                          </v-btn>-->
+
+<!--                          <v-btn-->
+<!--                              color="error"-->
+<!--                              class="mr-4"-->
+<!--                              @click="reset"-->
+<!--                          >-->
+<!--                            Reset Form-->
+<!--                          </v-btn>-->
+
+<!--                          <v-btn-->
+<!--                              color="warning"-->
+<!--                              @click="resetValidation"-->
+<!--                          >-->
+<!--                            Reset Validation-->
+<!--                          </v-btn>-->
+                        </v-form>
                       </v-row>
                     </v-container>
-                    <small>*indicates required field</small>
+
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="blue darken-1"
                         text
-                        @click="dialognewperson = false"
+                        @click="dialognewperson = false&&reset"
                     >
-                      Close
+                      关闭
                     </v-btn>
                     <v-btn
                         color="blue darken-1"
                         text
                         @click="dialognewperson = false"
                     >
-                      Save
+                      保存
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -209,17 +264,24 @@
       </v-row>
       <v-row>
         <v-data-table
+            v-model="selected"
             :headers="headers"
             :items="desserts"
-            sort-by="calories"
+            sort-by="id"
             class="elevation-0"
             style="min-width: 100%"
             show-select
+            :search="search"
         >
-
+          <template v-slot:item.state="{ item }">
+            <v-chip
+                :color="getColor(item.state)"
+                dark
+            >
+              {{ userstatef(item.state) }}
+            </v-chip>
+          </template>
           <template v-slot:top>
-
-
               <v-divider
                   class="mx-4"
                   inset
@@ -228,85 +290,129 @@
               <v-spacer></v-spacer>
               <v-dialog
                   v-model="dialog"
-                  max-width="1000px"
+                  max-width="500px"
               >
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
+                    <v-switch
+                        v-model="editedItem.state"
+                        :label="`账号状态: ${userstatef(editedItem.state).toString()}`"
+                    ></v-switch>
                   </v-card-title>
-
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                        <v-form
+                            ref="form"
+                            v-model="valid"
+                            lazy-validation
                         >
-                          <v-text-field
-                              v-model="editedItem.name"
-                              label="Dessert name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.calories"
-                              label="Calories"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.fat"
-                              label="Fat (g)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.carbs"
-                              label="Carbs (g)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
-                          <v-text-field
-                              v-model="editedItem.protein"
-                              label="Protein (g)"
-                          ></v-text-field>
-                        </v-col>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.name"
+                                  :counter="10"
+                                  :rules="nameRules"
+                                  label="姓名"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.username"
+                                  :rules="emailRules"
+                                  label="账号"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-text-field
+                                  v-model="editedItem.password"
+                                  :counter="16"
+                                  :rules="passwordRules"
+                                  label="密码"
+                                  required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col
+
+                            >
+                              <v-menu
+                                  v-model="regmenu"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                      v-model="editedItem.birthday"
+                                      label="Picker in menu"
+                                      prepend-icon="mdi-calendar"
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="regdate"
+                                    no-title
+                                    scrollable
+                                    @input="regmenu=false"
+                                >
+
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
+
+                          </v-row>
+                          <v-row>
+                            <v-col>
+                              <v-select
+                                  v-model="editedItem.auth_manage"
+                                  :items="useritems"
+                                  :rules="[v => !!v || '请选择用户类型']"
+                                  label="用户类型"
+                                  required
+                              ></v-select>
+                            </v-col>
+                            <v-col>
+                              <v-select
+                                  v-model="editedItem.sex"
+                                  :items="sexitems"
+                                  :rules="[v => !!v || '请选择性别']"
+                                  label="性别"
+                                  required
+                              ></v-select>
+                            </v-col>
+
+                          </v-row>
+
+                        </v-form>
                       </v-row>
                     </v-container>
-                  </v-card-text>
 
+                  </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="blue darken-1"
                         text
-                        @click="close"
+                        @click="dialog = false&&reset"
                     >
-                      Cancel
+                      关闭
                     </v-btn>
                     <v-btn
                         color="blue darken-1"
                         text
                         @click="save"
                     >
-                      Save
+                      保存
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -356,44 +462,88 @@
 </template>
 
 <script>
+
 export default {
   name: "renyuan",
   data: () => ({
+    regdate: new Date().toISOString().substr(0, 10),
+    userstate:false,
+    regmenu: false,
+    valid: true,
+    name: '',
+    nameRules: [
+      v => !!v || '姓名是需要的',
+      v => (v && v.length <= 10) || '姓名必须小于十个字符',
+    ],
+    email: '',
+    emailRules: [
+      v => !!v || '请填写账号',
+      v =>/[0-9a-zA-Z]/.test(v) || '账号只能是字母和数字',
+      v => (v && v.length <= 10) || '账号必须小于10个字符',
+    ],
+    password: '',
+    passwordRules: [
+      v => !!v || '请填写密码',
+      v =>/[0-9a-zA-Z]/.test(v) || '密码只能是字母和数字',
+      v => (v && v.length <= 10) || '密码必须小于16个字符',
+    ],
+    userselect: null,
+    useritems: [    //dia
+      '工作人员',
+      '指挥人员',
+      '专家人员',
+    ],
+    sexselect: null,
+    sexitems: [    //dia
+      '男',
+      '女',
+    ],
+    checkbox: false,
+    auth:['工作人员','指挥人员','专家人员'],
+    stateconst:['正常','停用'],
+    selected: [],
+    search:'',
+    auth_select:'',
+    state_select:'',
     date: ['', ''],
     dialog: false,
     dialognewperson:false,
     dialogDelete: false,
     headers: [
-      {
-        text: 'ID',
-        align: 'start',
-        value: 'id',
-      },
-      { text: '账号', value: 'number' },
+      {text: 'ID', align: 'start',value: 'id',},
+      { text: '账号', value: 'username' },
       { text: '密码', value: 'password' },
       { text: '姓名', value: 'name' },
       { text: '性别', value: 'sex' },
       { text: '出生日期', value: 'birthday'},
-      { text: '人员编号', value: 'personid'},
-      { text: '人员类型', value: 'persontype'},
-      { text: '账号状态', value: 'status'},
+      { text: '人员编号', value: 'num'},
+      { text: '人员类型', value: 'auth_manage'},
+      { text: '账号状态', value: 'state'},
       { text: '操作', value: 'actions', sortable: false },
     ],
     desserts: [],
     editedIndex: -1,
     editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      id:'',
+      username:'',
+      password:'',
+      name:'',
+      auth_manage:'',
+      state:true,
+      sex:'',
+      birthday:'',
+      num:'',
     },
     defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      id:'',
+      username:'',
+      password:'',
+      name:'',
+      auth_manage:'',
+      state:'',
+      sex:'',
+      birthday:'',
+      num:'',
     },
   }),
   computed: {
@@ -401,8 +551,9 @@ export default {
       return this.date.join(' ~ ')
     },
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? '新增用户' : '修改用户信息'
     },
+
   },
 
   watch: {
@@ -418,81 +569,103 @@ export default {
     this.initialize()
   },
   methods: {
+    getColor (item) {
+      if (item === false) return 'red'
+      else  return 'green'
+
+    },
+    userstatef (item) {
+      return item === true ? '正常' : '停用'
+    },
     initialize () {
       this.desserts = [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
+          id:'8',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
+          id:'9',
+          name:'tom',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
+          id:'10',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
+          id:'11',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
+          id:'12',
+          username:'123',
+          password:'123',
+          name:'tom',
+          auth_manage:'工作人员',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
+          id:'13',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          name:'tom',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
+          id:'14',
+          username:'123',
+          password:'123',
+          auth_manage:'工作人员',
+          name:'tom',
+          state:true,
+          sex:'男',
+          birthday:'1999-12-16',
+          num:'002',
         },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
+
+
       ]
     },
-
+    reset () {
+      this.$refs.form.reset()
+    },
+    validate () {
+      return this.$refs.form.validate()
+    },
     editItem (item) {
       this.editedIndex = this.desserts.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -527,13 +700,16 @@ export default {
     },
 
     save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        this.desserts.push(this.editedItem)
+      if (this.validate()){
+        if (this.editedIndex > -1) {
+          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        } else {
+          this.desserts.push(this.editedItem)
+        }
+        this.close()
       }
-      this.close()
-    },
+      }
+
   },
 }
 </script>
