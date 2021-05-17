@@ -37,6 +37,7 @@
                            md="4">
                       <v-text-field
                           label="事件名称*"
+
                           required
                       ></v-text-field>
                     </v-col>
@@ -156,6 +157,13 @@
                     @click="detailsandcheckout = false"
                 >
                   通过
+                </v-btn>
+                <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="detailsandcheckout = false"
+                >
+                  取消
                 </v-btn>
               </v-card-actions>
             </v-card>

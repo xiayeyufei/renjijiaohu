@@ -151,6 +151,13 @@
                 >
                   通过
                 </v-btn>
+                <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="detailsandcheckout = false"
+                >
+                  取消
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
