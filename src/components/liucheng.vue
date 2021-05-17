@@ -4,34 +4,42 @@
             <h1>流程维护</h1>
             <v-divider></v-divider>
             <v-row style="margin-top: 30px">
-                <v-col>
+                <v-col cols="12"
+                       md="4">
                     <v-text-field
                             label="流程名称搜索"
                             outlined
-                            v-model="input4"
+                            v-model="search"
+                            append-icon="mdi-magnify"
                             dense>
                     </v-text-field>
                 </v-col>
-                <v-col
-                        style="padding-right: 10px;max-width: fit-content;max-height: fit-content">
+                <v-col style="padding-right: 0px"cols="12"
+                       md="4">
+                    <treeselect v-model="value"
+                                :disableBranchNodes="true"
+                                :multiple="false"
+                                :options="options"
+                                :flat="true"
+                                :sort-value-by="sortValueBy"
+                                :default-expand-level="1"
+                        placeholder="选择流程类型"
+                    >
+                        <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                    </treeselect>
+                    <treeselect-value :value="value"></treeselect-value>
+                </v-col>
+                <v-col>
                     <v-btn
                             elevation="0"
-                    >搜索</v-btn>
+                            @click="getdatatype"
+                    >筛选</v-btn>
                 </v-col>
-                <v-col style="padding-left: 50px;max-width: 200px">
-                    <v-select
-                            :items="items"
-                            label="选择流程类型"
-                            outlined
-                            dense
-                    ></v-select>
-                </v-col>
-
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-btn>批量删除</v-btn>
-                    </v-col>
+                    </v-col><!--至此第一行结束-->
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-dialog
                                 v-model="dialognewperson"
@@ -50,79 +58,92 @@
                             </template>
                             <v-card>
                                 <v-card-title>
-                                    <span class="headline">User Profile</span>
+                                    <span class="headline">新增流程</span>
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container>
                                         <v-row>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12"
+                                                   sm="6"
                                             >
                                                 <v-text-field
-                                                        label="Legal first name*"
-                                                        required
-                                                ></v-text-field>
+                                                        label="流程名称"
+                                                        outlined
+                                                        dense>
+                                                </v-text-field>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12"
+                                                sm="6"
                                             >
-                                                <v-text-field
-                                                        label="Legal middle name"
-                                                        hint="example of helper text only on focus"
-                                                ></v-text-field>
+                                                <treeselect v-model="addvalue"
+                                                            :disableBranchNodes="true"
+                                                            :multiple="false"
+                                                            :options="options"
+                                                            :flat="true"
+                                                            :sort-value-by="sortValueBy"
+                                                            :default-expand-level="1"
+                                                            placeholder="选择流程类型"
+                                                >
+                                                    <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                                                </treeselect>
+                                                <treeselect-value :value="addvalue"></treeselect-value>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12" sm="6"
                                             >
-                                                <v-text-field
-                                                        label="Legal last name*"
-                                                        hint="example of persistent helper text"
-                                                        persistent-hint
-                                                        required
-                                                ></v-text-field>
+                                                <h3 style="padding-left: 17px;padding-top: 15px"
+                                                color="black">步骤</h3>
                                             </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field
-                                                        label="Email*"
-                                                        required
-                                                ></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field
-                                                        label="Password*"
-                                                        type="password"
-                                                        required
-                                                ></v-text-field>
-                                            </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
+                                            <v-col cols="12"  sm="6" style="padding-left: 20%"
                                             >
-                                                <v-select
-                                                        :items="['0-17', '18-29', '30-54', '54+']"
-                                                        label="Age*"
-                                                        required
-                                                ></v-select>
+                                                <v-btn @click="addsteps"
+                                                >
+                                                    新增步骤
+                                                </v-btn>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                            >
-                                                <v-autocomplete
-                                                        :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                                                        label="Interests"
-                                                        multiple
-                                                ></v-autocomplete>
+                                            <v-col cols="12"  sm="12">
+                                            <v-divider></v-divider>
+                                            </v-col>
+                                            <v-col>
+                                                <v-simple-table>
+                                                    <template v-slot:default>
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="text--accent-1" width="3">
+                                                                步骤序号
+                                                            </th>
+                                                            <th class="text--accent-1" width="12">
+                                                                步骤内容
+                                                            </th>
+                                                            <th class="text--accent-1">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr v-for="item1 in step" :key="item1.id">
+                                                            <td width="5px"><v-text-field
+                                                                    v-model="item1.id"
+                                                                    :readonly=true
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                            <td><v-text-field
+                                                                    v-model="item1.content"
+                                                                    :readonly="item1.readonly"
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                            <td width="15px">
+                                                                <!-- 非修改界面显示修改，修改界面显示保存 -->
+                                                                <v-btn rounded color="primary" dark @click="editstep(item1)" small>{{ item1.readonly? "修改":"保存" }}</v-btn>
+                                                                <!-- 非修改界面显示删除 -->
+                                                                <v-btn rounded color="error" dark small v-if="item1.readonly" @click="delstep(item1)">删除</v-btn>
+                                                                <!-- 修改界面显示取消 -->
+                                                                <v-btn rounded color="success" dark small v-if="!item1.readonly" @click="cancelstep(item1)">取消</v-btn>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </template>
+                                                </v-simple-table>
                                             </v-col>
                                         </v-row>
                                     </v-container>
-                                    <small>*indicates required field</small>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -131,25 +152,26 @@
                                             text
                                             @click="dialognewperson = false"
                                     >
-                                        Save
+                                        新增
                                     </v-btn>
                                     <v-btn
                                             color="black"
                                             text
                                             @click="dialognewperson = false"
                                     >
-                                        Cancel
+                                        取消
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
-                        </v-dialog>
+                        </v-dialog><!--至此新增dialog结束-->
                     </v-col>
                 </v-row>
             </v-row>
-            <v-row>
+            <v-row><!--以下开始画表格-->
                 <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :search="search"
                         sort-by="calories"
                         class="elevation-0"
                         style="min-width: 100%"
@@ -161,7 +183,7 @@
                                 inset
                                 vertical
                         ></v-divider>
-                        <v-spacer></v-spacer>
+                        <v-spacer></v-spacer><!--以下为修改删除弹框-->
                         <v-dialog
                                 v-model="dialog"
                                 max-width="1000px"
@@ -181,7 +203,7 @@
                                             >
                                                 <v-text-field
                                                         v-model="editedItem.name"
-                                                        label="Dessert name"
+                                                        label="流程名称"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -190,8 +212,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.calories"
-                                                        label="Calories"
+                                                        v-model="editedItem.style"
+                                                        label="流程类型"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -200,8 +222,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.fat"
-                                                        label="Fat (g)"
+                                                        v-model="editedItem.code"
+                                                        label="流程编码"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -210,8 +232,8 @@
                                                     md="4"
                                             >
                                                 <v-text-field
-                                                        v-model="editedItem.carbs"
-                                                        label="Carbs (g)"
+                                                        v-model="editedItem.step"
+                                                        label="步骤"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -291,13 +313,61 @@
 </template>
 
 <script>
+    //import the component
+    import Treeselect from '@riophae/vue-treeselect'
+    // import the styles
+    import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
+        components: { Treeselect },
         name: "renyuan",
         data: () => ({
+            liuchengtype:'',
+            search:'',
             date: ['', ''],
             dialog: false,
             dialognewperson:false,
             dialogDelete: false,
+            //options: generateOptions(3),
+            sortValueBy: 'ORDER_SELECTED',
+            value: null,
+            addvalue:null,
+            // define options
+            options: [ {
+                id: '自然灾害',
+                label: '自然灾害',
+                children: [ {
+                    id: '水旱灾害',
+                    label: '水旱灾害',
+                    children:[
+                        {
+                            id:'自然灾害水旱灾害一级',
+                            label:"一级",
+                            customLabel: `自然灾害水旱灾害一级`,
+
+                        },
+                        {
+                            id:'自然灾害水旱灾害二级',
+                            label:'二级',
+                            customLabel: `自然灾害水旱灾害二级`,
+                        },
+                    ]
+                }, {
+                    id: '火灾',
+                    label: '火灾',
+                    children:[
+                        {
+                            id:'自然灾害火灾一级',
+                            label:'一级',
+                            customLabel: `自然灾害火灾一级`,
+                        },
+                        {
+                            id:'自然灾害火灾二级',
+                            label:'二级',
+                            customLabel: `自然灾害火灾二级`,
+                        },
+                    ]
+                } ],
+            },],
             headers: [
                 {
                     text: 'ID',
@@ -314,10 +384,9 @@
             editedIndex: -1,
             editedItem: {
                 name: '',
-                calories: 0,
-                fat: 0,
-                carbs: 0,
-                protein: 0,
+                style: 0,
+                code: 0,
+                step: 0,
             },
             defaultItem: {
                 name: '',
@@ -326,6 +395,26 @@
                 carbs: 0,
                 protein: 0,
             },
+            step:[{
+                id:1,
+                content:"第1步",
+                readonly:true
+            },{
+                id:2,
+                content:"第2步",
+                readonly:true
+            },{
+                id:3,
+                content:"第3步",
+                readonly:true
+            },
+            ],
+            addstep: {
+                id:0,
+                content:"",
+                readonly:true
+            },
+            addstepIndex: -1,
         }),
         computed: {
             dateRangeText () {
@@ -349,77 +438,89 @@
             this.initialize()
         },
         methods: {
+            getdatatype() {
+                this.liuchengtype=''
+                for (var i =0;i<this.value.length;i++) {
+                    var liucheng
+                    liucheng=this.value[i]
+                    for(var key in liucheng){
+                        this.liuchengtype+=liucheng[key]
+                    }
+                }
+                console.log(this.liuchengtype)
+                console.log(123)
+            },
             initialize () {
                 this.desserts = [
                     {
-                        name: 'Frozen Yogurt',
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
+                        id:1,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Ice cream sandwich',
-                        calories: 237,
-                        fat: 9.0,
-                        carbs: 37,
-                        protein: 4.3,
+                        id:2,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Eclair',
-                        calories: 262,
-                        fat: 16.0,
-                        carbs: 23,
-                        protein: 6.0,
+                        id:3,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Cupcake',
-                        calories: 305,
-                        fat: 3.7,
-                        carbs: 67,
-                        protein: 4.3,
+                        id:4,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Gingerbread',
-                        calories: 356,
-                        fat: 16.0,
-                        carbs: 49,
-                        protein: 3.9,
+                        id:5,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Jelly bean',
-                        calories: 375,
-                        fat: 0.0,
-                        carbs: 94,
-                        protein: 0.0,
+                        id:6,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Lollipop',
-                        calories: 392,
-                        fat: 0.2,
-                        carbs: 98,
-                        protein: 0,
+                        id:7,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Honeycomb',
-                        calories: 408,
-                        fat: 3.2,
-                        carbs: 87,
-                        protein: 6.5,
+                        id:8,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'Donut',
-                        calories: 452,
-                        fat: 25.0,
-                        carbs: 51,
-                        protein: 4.9,
+                        id:9,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                     {
-                        name: 'KitKat',
-                        calories: 518,
-                        fat: 26.0,
-                        carbs: 65,
-                        protein: 7,
+                        id:10,
+                        name: '森林大火',
+                        style: "自然灾害火灾一级",
+                        code: "154",
+                        step: "1  2  3",
                     },
                 ]
             },
@@ -465,7 +566,36 @@
                 }
                 this.close()
             },
-        },
+            // 修改数据（保存数据）
+            editstep(item1) {
+                this.addstepIndex = this.step.indexOf(item1);//先找到desserts数组里面对应的索引，通俗点说就是确定修改哪一行数据
+                this.addstep = Object.assign({}, item1);//把未修改之前的值存到editedItem对象里面，方便用户取消修改
+                //以上两行主要是为取消修改服务，要实现修改其实只需下面一行就够了，因为html中本身的标签为<v-text-field>,也就是说只需控制它的只读和非只读来回切换即可做到修改保存
+                item1.readonly = !item1.readonly;
+            },
+            // 删除数据
+            delstep(item1) {
+                const index = this.step.indexOf(item1);//找到desserts数组里面对应的索引，通俗点说就是确定删除哪一行数据
+                confirm('确定要删除这一步骤吗?') && this.step.splice(index, 1);//系统弹出确认框，点击确定就是删除这一行数据
+            },
+            // 取消
+            cancelstep(item1) {
+                item1.readonly = !item1.readonly;//切换文本框的读写状态
+                this.$nextTick(() =>{
+                    Object.assign(this.step[this.addstepIndex], this.addstep);//点击取消之后，把未修改之前的数据还原到desserts数组
+                    this.addstepIndex = -1;//把索引标志置空
+                })
+            },
+            //增加
+            addsteps(){
+                var a=this.step.length+1
+                this.step.push({
+                    id:a,
+                    content:"第"+a+"步",
+                    readonly:true
+                })
+            }
+        }
     }
 </script>
 

@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <v-container>
       <h1>人员维护</h1>
@@ -90,9 +90,20 @@
           </v-btn>
         </v-col>
         <v-spacer></v-spacer>
+        <v-dialog v-model="plDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="headline" style="justify-items: center">你确定要删除勾选的人员信息吗？</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="plDelete=false">取消</v-btn>
+              <v-btn color="blue darken-1" text @click="plDelete=false">确定删除</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
           <v-col style="max-width: fit-content;max-height: fit-content">
-            <v-btn>批量删除</v-btn>
+            <v-btn @click="plDelete=true">批量删除</v-btn>
           </v-col>
             <v-col style="max-width: fit-content;max-height: fit-content">
               <v-dialog
@@ -247,8 +258,7 @@
                       关闭
                     </v-btn>
                     <v-btn
-                        color="blue darken-1"
-                        text
+                        color="primary"
                         @click="dialognewperson = false"
                     >
                       保存
@@ -408,8 +418,7 @@
                       关闭
                     </v-btn>
                     <v-btn
-                        color="blue darken-1"
-                        text
+                        color="primary"
                         @click="save"
                     >
                       保存
@@ -419,11 +428,11 @@
               </v-dialog>
               <v-dialog v-model="dialogDelete" max-width="500px">
                 <v-card>
-                  <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+                  <v-card-title class="headline" style="justify-items: center">你确定要删除该人员信息吗？</v-card-title>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                    <v-btn color="blue darken-1" text @click="closeDelete">取消</v-btn>
+                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">确定删除</v-btn>
                     <v-spacer></v-spacer>
                   </v-card-actions>
                 </v-card>
@@ -506,6 +515,7 @@ export default {
     auth_select:'',
     state_select:'',
     date: ['', ''],
+    plDelete:false,
     dialog: false,
     dialognewperson:false,
     dialogDelete: false,
