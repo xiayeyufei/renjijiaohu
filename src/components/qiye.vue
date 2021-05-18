@@ -358,6 +358,7 @@
             initialize () {
                 this.company = [
                     {
+                        id:1,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -366,6 +367,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:2,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -374,6 +376,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:3,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -382,6 +385,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:4,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -390,6 +394,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:5,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -398,6 +403,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:6,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -406,6 +412,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:7,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -414,6 +421,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:8,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -422,6 +430,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:1,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
@@ -430,6 +439,7 @@
                         type:'软件企业',
                     },
                     {
+                        id:9,
                         name: '东软',
                         position: '地址',
                         location: '(128.15,128.15)',
