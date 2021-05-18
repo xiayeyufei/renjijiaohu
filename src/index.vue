@@ -3,11 +3,16 @@
     <v-navigation-drawer
         v-model="drawer"
         app
+        absolute
+        bottom
+        temporary
+
     >
       <v-sheet
           class="mx-auto"
           max-width="300"
           tile
+
       >
         <v-list flat>
           <v-subheader>{{ typeofuser }}</v-subheader>
@@ -19,9 +24,7 @@
                 v-for="(item, i) in items"
                 :key="i"
             >
-              <v-list-item-icon>
-                <v-icon v-text="item.icon"></v-icon>
-              </v-list-item-icon>
+
               <v-list-item-content @click="$router.push(item.url)">
                 <v-list-item-title v-text="item.text" ></v-list-item-title>
               </v-list-item-content>
@@ -32,8 +35,10 @@
       <!--  -->
     </v-navigation-drawer>
 
-    <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-app-bar
+               app
+               color="light-blue lighten-1" style="color: white">
+      <v-app-bar-nav-icon @click="drawer = !drawer" style="color: white"></v-app-bar-nav-icon>
 
       <v-toolbar-title>环保应急管理系统</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -41,7 +46,7 @@
       <v-responsive max-width="260">
         <v-row style="padding: 12px">
 
-          <span style="text-align: center;color:black;font-size: small;margin: 10px;font-family: Roboto,sans-serif;color: rgba(0,0,0,.6) !important">
+          <span style="text-align: center;color:white;font-size: small;margin: 10px;font-family: Roboto,sans-serif;">
             {{person.name}}
           </span>
           <v-menu
@@ -52,7 +57,8 @@
             <template v-slot:activator="{ on, attrs }" >
               <v-btn  v-bind="attrs"
                       height="100%"
-                      v-on="on" elevation="0" style="text-align: center;color:white;" @click="$router.push('/login')">
+                      color="light-blue lighten-1"
+                      v-on="on" elevation="0" style="text-align: center;color:white;">
                 <v-avatar
                     size="40"
                 ><img :src="img">
@@ -103,7 +109,7 @@ line-height: 3rem;">
                     <br>
                     <el-form-item label-width="0px">
                       <v-row style="align-items: center;justify-content: center">
-                        <v-btn color="light-blue lighten-3" large width="90%" @click="submitForm('ruleForm')" style="color: white">登录</v-btn>
+                        <v-btn color="light-blue lighten-1" large width="90%" @click="submitForm('ruleForm')&&$router.push(firsturl)" style="color: white">登录</v-btn>
                       </v-row>
                     </el-form-item>
                   </el-form>
@@ -127,6 +133,8 @@ line-height: 3rem;">
 </template>
 
 <script>
+import router from "@/router";
+
 function isValidPhone(str) {
   const reg =/[0-9a-zA-Z]/
   return reg.test(str)
@@ -158,6 +166,8 @@ export default {
     };
 
   return{
+    firsturl:'',
+    type:'',
     ruleForm: {
       phone: '',
       checkPass: '',
@@ -173,6 +183,8 @@ export default {
       ],
     },
     flag:true,
+    alert11:false,
+    message:'',
     typeofuser:'请先登录',
     img:require('./assets/keli.jpg'),
     drawer: null,
@@ -207,9 +219,16 @@ export default {
   },
   methods: {
     zhuxiao(){
+this.person.name='';
       this.flag=true;
       this.items=[];
       this.typeofuser='请先登录'
+      this.$message({
+        message: '注销成功',
+        type: 'info',
+        showClose: true,
+      });
+      router.push('/index')
     },
     submitForm(formName) {
       // this.$refs[formName].validate((valid) => {
@@ -236,30 +255,54 @@ export default {
               this.typeofuser='超级管理员模式'
             this.person.name=1;
               this.flag=false
-            alert('登录成功')
+            router.push('/renyuan')
+            this.$message({
+              message: '成功登录超级管理员',
+              type: 'success',
+              showClose: true,
+            });
           }
           else if (this.ruleForm.phone==='2'&&this.ruleForm.checkPass==='222222'){
             this.items=this.gongzuo;
             this.typeofuser='工作人员'
             this.person.name=2;
             this.flag=false
-            alert('登录成功')
+            router.push('/shijian')
+            this.$message({
+              message: '成功登录工作人员',
+              type: 'success',
+              showClose: true,
+            });
           }
           else if (this.ruleForm.phone==='3'&&this.ruleForm.checkPass==='333333'){
             this.items=this.zhihui;
-            this.typeofuser='指挥人员'
+            this.typeofuser='成功登录指挥人员'
             this.person.name=3;
             this.flag=false
-            alert('登录成功')
+            router.push('/jiebaoglzh')
+            this.$message({
+              message: '注册成功',
+              type: 'success',
+              showClose: true,
+            });
           }
           else if (this.ruleForm.phone==='4'&&this.ruleForm.checkPass==='444444'){
             this.items=this.zhuanjia;
             this.typeofuser='专家人员'
             this.person.name=4;
             this.flag=false
-            alert('登录成功')
+            router.push('/jiebaoglzj')
+            this.$message({
+              message: '成功登录专家人员',
+              type: 'success',
+              showClose: true,
+            });
           }else{
-            alert('登录失败')
+            this.$message({
+              message: '登录失败',
+              type: 'error',
+              showClose: true,
+            });
           }
         }
       });

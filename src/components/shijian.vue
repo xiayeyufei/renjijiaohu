@@ -225,7 +225,7 @@
               </v-btn>
               <v-btn
                   color="primary"
-                  @click="changeDialog = false"
+                  @click="alert11"
               >
                 保存
               </v-btn>
@@ -322,6 +322,7 @@ export default {
   name: "shijian",
 
   data:()=>({
+
     changeDialog:false,
     clickable:true,
     nodeDialog: false,
@@ -392,7 +393,14 @@ export default {
   },
 
   methods:{
-
+alert11(){
+  this.nodeDialog = false
+  this.$message({
+    message: '保存信息成功',
+    type: 'success',
+    showClose: true,
+  });
+},
     changeMessage(){
       console.log(66666666)
       var newModel =JSON.parse(JSON.stringify(this.active[0]));
