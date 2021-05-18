@@ -36,7 +36,7 @@
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
                     <v-col style="max-width: fit-content;max-height: fit-content">
-                        <v-btn>批量删除</v-btn>
+                        <v-btn @click="plDelete=true">批量删除</v-btn>
                     </v-col>
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-dialog
@@ -68,6 +68,7 @@
                                             >
                                                 <v-text-field
                                                         label="事件名称*"
+                                                        :rules="sjnameRules"
                                                         required
                                                         outlined
                                                         dense
@@ -76,9 +77,10 @@
                                             <v-col cols="12"
                                                    md="4">
                                                 <v-select
-                                                        v-model="qyselect"
+                                                        v-model="qyadd"
                                                         :items="qyitems"
                                                         label="企业名称"
+                                                        :rules="[v => !!v || '请选择企业']"
                                                         outlined
                                                         dense
                                                 ></v-select>
@@ -89,6 +91,7 @@
                                                         v-model="lcadd"
                                                         :items="lcitems"
                                                         label="流程名称"
+                                                        :rules="[v => !!v || '请选择流程']"
                                                         outlined
                                                         dense
                                                 ></v-select>
@@ -99,6 +102,7 @@
                                             >
                                                 <v-text-field
                                                         label="报警人*"
+                                                        :rules="[v => !!v || '请填写报警人']"
                                                         outlined
                                                         required
                                                         dense
@@ -110,6 +114,7 @@
                                             >
                                                 <v-text-field
                                                         label="报警人人电话*"
+                                                        :rules="phonerules"
                                                         outlined
                                                         required
                                                         dense
@@ -263,6 +268,7 @@
                                 small
                                 class="mr-2"
                                 @click="editItem(item)"
+                                :disabled="edit"
                         >
                             mdi-pencil
                         </v-icon>
@@ -283,7 +289,17 @@
                     </template>
                 </v-data-table>
             </v-row>
-
+            <v-dialog v-model="plDelete" max-width="500px">
+                <v-card>
+                    <v-card-title class="headline" style="justify-items: center">你确定要删除勾选的人员信息吗？</v-card-title>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">取消</v-btn>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">确定删除</v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-container>
     </div>
 </template>
@@ -300,9 +316,25 @@
             qyselect: null,
             lcselect:null,
             lcadd:null,
+            qyadd:null,
+            edit:false,
+            plDelete:false,
+            qyitems:[
+                "华林科技有限公司",
+                "东北化肥农业有限公司"
+            ],
             lcitems:[
                 '大楼火灾处理',
                 '河流水污染处理'
+            ],
+            sjnameRules: [
+                v => !!v || '事件名称是需要的',
+                v => (v && v.length <= 20) || '事件名称必须小于20个字符',
+            ],
+            phonerules: [
+                v => !!v || '请填写电话号码',
+                v =>/[0-9]/.test(v) || '电话号码只能是数字',
+                v => (v && v.length <= 11) || '电话必须小于12个数字',
             ],
             headers: [
                 {
@@ -380,7 +412,7 @@
                 this.company = [
                     {
                         id:1,
-                        sjname: '火灾',
+                        sjname: '写字楼火灾',
                         companyname: '华林科技有限公司',
                         liuname: '大楼火灾处理',
                         telperson: '孙xx',
@@ -394,11 +426,11 @@
                     },
                     {
                         id:2,
-                        sjname: '火灾',
-                        companyname: '华林科技有限公司',
-                        liuname: '大楼火灾处理',
-                        telperson: '孙xx',
-                        telephone:'139xxxx4985',
+                        sjname: '河流排污',
+                        companyname: '东北化肥农业有限公司',
+                        liuname: '河流水污染处理',
+                        telperson: '李xx',
+                        telephone:'139xxxx6987',
                         jbtime:'2021-05-01 16:25:48',
                         cjname:'王xx',
                         cjtime:'2020-12-15 18:06:39',
@@ -496,14 +528,18 @@
 
             editItem (item) {
                 this.editedIndex = this.company.indexOf(item)
-                this.editedItem = Object.assign({}, item)
-                this.dialog = true
+                if(Object.assign({}, item).type == "待审批"){
+                    this.editedItem = Object.assign({}, item)
+                    this.dialog = true
+                }
             },
 
             deleteItem (item) {
                 this.editedIndex = this.company.indexOf(item)
-                this.editedItem = Object.assign({}, item)
-                this.dialogDelete = true
+                if(Object.assign({}, item).type == "待审批") {
+                    this.editedItem = Object.assign({}, item)
+                    this.dialogDelete = true
+                }
             },
 
             deleteItemConfirm () {

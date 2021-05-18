@@ -38,7 +38,7 @@
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
                     <v-col style="max-width: fit-content;max-height: fit-content">
-                        <v-btn>批量删除</v-btn>
+                        <v-btn @click="plDelete=true">批量删除</v-btn>
                     </v-col><!--至此第一行结束-->
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-dialog
@@ -70,6 +70,7 @@
                                                         label="流程名称"
                                                         outlined
                                                         dense
+                                                        :rules="[v => !!v || '流程名称必须填写']"
                                                         v-model="addstepitem.name">
                                                 </v-text-field>
                                             </v-col>
@@ -131,6 +132,7 @@
                                                             <td><v-text-field
                                                                     v-model="item1.content"
                                                                     :readonly="item1.readonly"
+                                                                    :rules="[v => !!v || '流程步骤不能为空']"
                                                                     dense
                                                                     autofocus
                                                             ></v-text-field></td>
@@ -315,8 +317,8 @@
                                 <v-card-title class="headline">你确定要删除这个流程吗?</v-card-title>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">确定</v-btn>
+                                    <v-btn color="black darken-1" text @click="closeDelete">取消</v-btn>
                                     <v-spacer></v-spacer>
                                 </v-card-actions>
                             </v-card>
@@ -347,6 +349,17 @@
                     </template>
                 </v-data-table>
             </v-row>
+            <v-dialog v-model="plDelete" max-width="500px">
+                <v-card>
+                    <v-card-title class="headline" style="justify-items: center">你确定要删除勾选的人员信息吗？</v-card-title>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">取消</v-btn>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">确定删除</v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
 
         </v-container>
     </div>
@@ -373,12 +386,13 @@
             value: null,
             addvalue:null,
             editvalue:null,
+            plDelete:false,
             //增加表项
             addstepitem:{
-                id:0,
+                id:11,
                 name: '',
-                style: "",
-                code: "",
+                style:"liucheng",
+                code: "154",
                 step: "",
             },
             //define codeoption

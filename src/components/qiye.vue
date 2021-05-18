@@ -16,7 +16,7 @@
                 <v-spacer></v-spacer>
                 <v-row style="padding: 0px;padding-right: 12px;padding-top: 12px" class="d-flex flex-row-reverse">
                     <v-col style="max-width: fit-content;max-height: fit-content">
-                        <v-btn>批量删除</v-btn>
+                        <v-btn @click="plDelete=true">批量删除</v-btn>
                     </v-col>
                     <v-col style="max-width: fit-content;max-height: fit-content">
                         <v-dialog
@@ -49,6 +49,7 @@
                                                 <v-text-field
                                                         label="风险企业名称*"
                                                         required
+                                                        :rules="[v => !!v || '企业名称必须填写']"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -59,6 +60,7 @@
                                                 <v-text-field
                                                         label="企业地址"
                                                         hint="xx路xx号"
+                                                        :rules="[v => !!v || '企业地址必须填写']"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -70,6 +72,7 @@
                                                 <v-text-field
                                                         label="企业类型*"
                                                         required
+                                                        :rules="[v => !!v || '企业类型必须填写']"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
@@ -80,6 +83,8 @@
                                                         label="经度*"
                                                         hint="保留两位小数"
                                                         required
+                                                        v-model="amount"
+                                                        >
                                                 ></v-text-field>
                                                 <!--hint="example of persistent helper text"
                                                         persistent-hint-->
@@ -100,6 +105,7 @@
                                             >
                                                 <v-text-field
                                                         label="企业法人*"
+                                                        :rules="[v => !!v || '企业法人必须填写']"
                                                         required
                                                 ></v-text-field>
                                             </v-col>
@@ -110,6 +116,7 @@
                                                 <v-text-field
                                                         label="法人电话*"
                                                         required
+                                                        :rules="phonerules"
                                                 ></v-text-field>
                                             </v-col>
                                         </v-row>
@@ -287,7 +294,17 @@
                     </template>
                 </v-data-table>
             </v-row>
-
+            <v-dialog v-model="plDelete" max-width="500px">
+                <v-card>
+                    <v-card-title class="headline" style="justify-items: center">你确定要删除勾选的人员信息吗？</v-card-title>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">取消</v-btn>
+                        <v-btn color="blue darken-1" text @click="plDelete=false">确定删除</v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-container>
     </div>
 </template>
@@ -295,11 +312,18 @@
     export default {
         name: "renyuan",
         data: () => ({
+            amount:"",
             search:'',
             date: ['', ''],
             dialog: false,
             dialognewperson:false,
             dialogDelete: false,
+            plDelete:false,
+            phonerules: [
+                v => !!v || '请填写电话号码',
+                v =>/[0-9]/.test(v) || '电话号码只能是数字',
+                v => (v && v.length <= 11) || '电话必须小于12个数字',
+            ],
             headers: [
                 {
                     text: 'ID',
@@ -315,6 +339,7 @@
                 {text:'操作',value:'actions',sortable: false}
             ],
             company: [],
+
             editedIndex: -1,
             editedItem: {
                 name: '',
@@ -343,12 +368,37 @@
         },
 
         watch: {
+            amount(newVal, oldVal) {
+                // 解决数字键盘可以输入输入多个小数点问题
+                if (newVal === '' && oldVal.toString().indexOf('.') > 0) {
+                    this.amount = oldVal;
+                    console.log(this.amount)
+                    return;
+                }
+                // 保留两位小数
+                if (newVal) {
+                    newVal = newVal.toString();
+                    var pointIndex = newVal.indexOf('.');
+                    if (pointIndex > 0 && (newVal.length - pointIndex) > 3) {
+                        this.amount = oldVal;
+                        console.log(this.amount)
+                        return;
+                    }
+                }
+                // 最大值
+                if (newVal > 999999) {
+                    this.amount = oldVal;
+                    console.log(this.amount)
+                    return;
+                }
+            },
             dialog (val) {
                 val || this.close()
             },
             dialogDelete (val) {
                 val || this.closeDelete()
             },
+
         },
 
         created () {
