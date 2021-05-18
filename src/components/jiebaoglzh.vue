@@ -255,6 +255,7 @@
             class="elevation-0"
             style="min-width: 100%"
             show-select
+            :item-key="alarms.id"
         >
 
           <template v-slot:top>
