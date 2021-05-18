@@ -675,6 +675,8 @@
                 this.addstepitem.step=b
                 var add=this.addstepitem
                 this.desserts.push(add)
+                this.dialognewperson=false
+
                 /*this.addstepitem.id=0
                 this.addstepitem.step=""
                 this.addstepitem.style=""
