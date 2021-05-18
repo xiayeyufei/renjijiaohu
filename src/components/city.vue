@@ -224,14 +224,12 @@
                       <v-col cols="12">
                         <v-text-field
                             label="Remark"
-                            type="password"
                             required
                         ></v-text-field>
                       </v-col>
 
                     </v-row>
                   </v-container>
-                  <small>*indicates required field</small>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -258,8 +256,8 @@
       <v-row>
         <v-data-table
             :headers="headers"
-            :items="desserts"
-            sort-by="calories"
+            :items="citys"
+            sort-by="id"
             class="elevation-0"
             style="min-width: 100%"
             show-select
@@ -293,7 +291,7 @@
                       >
                         <v-text-field
                             v-model="editedItem.name"
-                            label="Dessert name"
+                            label="名称"
                         ></v-text-field>
                       </v-col>
                       <v-col
@@ -302,8 +300,8 @@
                           md="4"
                       >
                         <v-text-field
-                            v-model="editedItem.calories"
-                            label="Calories"
+                            v-model="editedItem.code"
+                            label="编码"
                         ></v-text-field>
                       </v-col>
                       <v-col
@@ -312,8 +310,8 @@
                           md="4"
                       >
                         <v-text-field
-                            v-model="editedItem.fat"
-                            label="Fat (g)"
+                            v-model="editedItem.province"
+                            label="省"
                         ></v-text-field>
                       </v-col>
                       <v-col
@@ -322,8 +320,8 @@
                           md="4"
                       >
                         <v-text-field
-                            v-model="editedItem.carbs"
-                            label="Carbs (g)"
+                            v-model="editedItem.rescue_num"
+                            label="救援人数"
                         ></v-text-field>
                       </v-col>
                       <v-col
@@ -332,8 +330,8 @@
                           md="4"
                       >
                         <v-text-field
-                            v-model="editedItem.protein"
-                            label="Protein (g)"
+                            v-model="editedItem.cars_num"
+                            label="救援车辆"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -419,25 +417,25 @@ export default {
       {text: '城市名称', value: 'name'},
       {text: '城市编码', value: 'code'},
       {text: '省', value: 'province'},
-      {text: '救援人数', value: 'rescue-num'},
-      {text: '救援车辆', value: 'cars-num'},
-      {text: '操作', value: 'action'},
+      {text: '救援人数', value: 'rescue_num'},
+      {text: '救援车辆', value: 'cars_num'},
+      { text: '操作', value: 'actions', sortable: false },
     ],
-    desserts: [],
+    citys: [],
     editedIndex: -1,
     editedItem: {
       name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      code: 0,
+      province: 0,
+      rescue_num: 0,
+      cars_num: 0,
     },
     defaultItem: {
       name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      code: 0,
+      province: 0,
+      rescue_num: 0,
+      cars_num: 0,
     },
   }),
   computed: {
@@ -463,94 +461,104 @@ export default {
   },
   methods: {
     initialize() {
-      this.desserts = [
+      this.citys = [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
         {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
+          id: 1,
+          name: '沈阳',
+          code: '12',
+          province: '辽宁',
+          rescue_num: 100,
+          cars_num: 200,
         },
       ]
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.citys.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.citys.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialogDelete = true
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1)
+      this.citys.splice(this.editedIndex, 1)
       this.closeDelete()
     },
 
@@ -572,9 +580,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        Object.assign(this.citys[this.editedIndex], this.editedItem)
       } else {
-        this.desserts.push(this.editedItem)
+        this.citys.push(this.editedItem)
       }
       this.close()
     },

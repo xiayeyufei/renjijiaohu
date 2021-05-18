@@ -136,7 +136,7 @@
                           <v-row>
                             <v-col>
                               <v-text-field
-                                  v-model="name"
+                                  v-model="editedItem.name"
                                   :counter="10"
                                   :rules="nameRules"
                                   label="姓名"
@@ -145,7 +145,7 @@
                             </v-col>
                             <v-col>
                               <v-text-field
-                                  v-model="email"
+                                  v-model="editedItem.username"
                                   :rules="emailRules"
                                   label="账号"
                                   required
@@ -156,7 +156,7 @@
                           <v-row>
                             <v-col>
                               <v-text-field
-                                  v-model="password"
+                                  v-model="editedItem.password"
                                   :counter="16"
                                   :rules="passwordRules"
                                   label="密码"
@@ -176,7 +176,7 @@
                               >
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
-                                      v-model="regdate"
+                                      v-model="editedItem.birthday"
                                       label="Picker in menu"
                                       prepend-icon="mdi-calendar"
                                       readonly
@@ -185,7 +185,7 @@
                                   ></v-text-field>
                                 </template>
                                 <v-date-picker
-                                    v-model="regdate"
+                                    v-model="editedItem.birthday"
                                     no-title
                                     scrollable
                                     @input="regmenu=false"
@@ -199,7 +199,7 @@
                           <v-row>
                             <v-col>
                               <v-select
-                                  v-model="userselect"
+                                  v-model="editedItem.auth_manage"
                                   :items="useritems"
                                   :rules="[v => !!v || '请选择用户类型']"
                                   label="用户类型"
@@ -208,7 +208,7 @@
                             </v-col>
                             <v-col>
                               <v-select
-                                  v-model="sexselect"
+                                  v-model="editedItem.sex"
                                   :items="sexitems"
                                   :rules="[v => !!v || '请选择性别']"
                                   label="性别"
@@ -259,7 +259,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        @click="dialognewperson = false"
+                        @click="save"
                     >
                       保存
                     </v-btn>
@@ -370,7 +370,7 @@
                                   ></v-text-field>
                                 </template>
                                 <v-date-picker
-                                    v-model="regdate"
+                                    v-model="editedItem.birthday"
                                     no-title
                                     scrollable
                                     @input="regmenu=false"
@@ -539,7 +539,7 @@ export default {
       password:'',
       name:'',
       auth_manage:'',
-      state:true,
+      state:false,
       sex:'',
       birthday:'',
       num:'',

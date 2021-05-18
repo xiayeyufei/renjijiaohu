@@ -148,8 +148,122 @@
       <v-col
 
       >
+        <v-dialog
+            v-model="changeDialog"
+            max-width="600px"
+        >
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              修改事件信息
+            </v-card-title>
 
-        <h2>详细信息</h2>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                  >
+                    <v-combobox
+                        label="灾害类型"
+                        :items="itemlist"
+                        item-text="type"
+                        v-model="changItem.type"
+                        :hint="notice"
+                        persistent-hint
+                        @blur="lostfocus"
+                    ></v-combobox>
+                  </v-col>
+                  <v-col
+                  >
+                    <v-combobox
+                        label="灾害名称"
+                        :items="selectNodeitem"
+                        v-model="changItem.name"
+                    ></v-combobox>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                  >
+                    <v-select
+                        label="灾害等级"
+                        :items="levelname"
+                        v-model="changItem.level"
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                  >
+                    <v-text-field
+                        label="灾害编号"
+                        readonly
+                        :value="changItem.code"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-textarea
+                        solo
+                        name="input-7-4"
+                        label="备注"
+                        :value="changItem.beizhu"
+                    ></v-textarea>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="changeDialog = false"
+              >
+                关闭
+              </v-btn>
+              <v-btn
+                  color="primary"
+                  @click="changeDialog = false"
+              >
+                保存
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-row style="padding-bottom: 12px">
+          <v-col style="max-width: fit-content">
+            <h2>详细信息</h2>
+          </v-col>
+          <template v-if="active.length">
+            <v-col>
+              <v-btn
+                  color="primary"
+                  @click="changeMessage"
+              >
+                修改信息
+              </v-btn>
+
+
+            </v-col>
+          </template>
+          <template v-else>
+            <v-col>
+              <v-btn
+                  color="primary"
+                  @click="changeMessage"
+                  disabled
+              >
+                修改信息
+              </v-btn>
+
+
+            </v-col>
+          </template>
+        </v-row>
+
+
 
         <v-divider ></v-divider>
         <template v-if="!active.length">
@@ -208,10 +322,14 @@ export default {
   name: "shijian",
 
   data:()=>({
+    changeDialog:false,
+    clickable:true,
     nodeDialog: false,
     newNodeType:'',
     notice:'',
     newNodeName:'',
+    changItem:{id:0,type:'',name:'',level:'',code:'',beizhu:''},
+
     search: null,
     selection: [],
     active: [],
@@ -240,7 +358,23 @@ export default {
           { id: 8, level: '自然灾害',children: [{id:14,type:'矿泉水污染',name:'自然灾害',level:'一级',code:'123456',beizhu:'水旱灾害包括：江河洪水、渍涝、山洪（指由降雨引发的山洪、泥石流、滑坡灾害）、风暴潮、冰凌、台风、地震等造成的洪涝灾害以及严重旱灾。'}] },
         ],
       },
+    ],
+    itemlist:[
+
+        {
+          id: 1,
+          type: '自然灾害',
+        },{
+        id: 4,
+        type: '事故灾难',
+      },
+        {
+          id: 7,
+          type: '矿泉水污染',
+        },
+
     ],}),
+
   computed: {
     items () {
       return [
@@ -252,13 +386,21 @@ export default {
     },
     selected () {
       if (!this.active.length) return undefined
-
       const id = this.active[0]
-
       return this.items.find(user => user.id === id)
     },
   },
+
   methods:{
+
+    changeMessage(){
+      console.log(66666666)
+      var newModel =JSON.parse(JSON.stringify(this.active[0]));
+      // 只改变新对象的值
+     this.changItem = newModel;
+      console.log(this.changItem.type)
+        this.changeDialog=true
+    },
     lostfocus(){
       console.log("666666")
       let item;
@@ -278,6 +420,32 @@ export default {
             this.selectNodeitem=item.children
             flag=true;
           }
+      }
+      if (flag){
+        this.notice='已有节点'
+      }else {
+        this.notice='未有该名称的灾害类型，如果创建将新建类型'
+      }
+    },
+    lostfocuschange(){
+      let item;
+      let flag=false
+
+      console.log(666666666)
+      console.log(this.changItem.type)
+      for (item of this.items){
+        console.log(item.level)
+        if (item.level!==this.changItem.type){
+
+          console.log(this.changItem.type)
+          console.log("2")
+        }
+        else{
+          console.log("1")
+          this.selectNodeitem=item.children
+          console.log(555)
+          flag=true;
+        }
       }
       if (flag){
         this.notice='已有节点'
