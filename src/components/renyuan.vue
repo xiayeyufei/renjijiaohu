@@ -177,7 +177,7 @@
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
                                       v-model="editedItem.birthday"
-                                      label="Picker in menu"
+                                      label="出生日期"
                                       prepend-icon="mdi-calendar"
                                       readonly
                                       v-bind="attrs"
@@ -362,7 +362,7 @@
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
                                       v-model="editedItem.birthday"
-                                      label="Picker in menu"
+                                      label="出生日期"
                                       prepend-icon="mdi-calendar"
                                       readonly
                                       v-bind="attrs"
