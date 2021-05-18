@@ -684,6 +684,11 @@ export default {
           let d = new Date(this.editedItem.countday)
           this.editedItem.wuzicode=d.getTime()
           this.desserts.push(this.editedItem)
+          this.$message({
+            message: '保存信息成功',
+            type: 'success',
+            showClose: true,
+          });
         }
         this.close()
       }
