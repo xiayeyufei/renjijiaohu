@@ -62,20 +62,21 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container>
-                                        <v-row>
+                                        <v-row dense>
                                             <v-col cols="12"
                                                    sm="6"
                                             >
                                                 <v-text-field
                                                         label="流程名称"
                                                         outlined
-                                                        dense>
+                                                        dense
+                                                        v-model="addstepitem.name">
                                                 </v-text-field>
                                             </v-col>
                                             <v-col cols="12"
                                                 sm="6"
                                             >
-                                                <treeselect v-model="addvalue"
+                                                <treeselect v-model="addstepitem.style"
                                                             :disableBranchNodes="true"
                                                             :multiple="false"
                                                             :options="options"
@@ -83,6 +84,7 @@
                                                             :sort-value-by="sortValueBy"
                                                             :default-expand-level="1"
                                                             placeholder="选择流程类型"
+
                                                 >
                                                     <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
                                                 </treeselect>
@@ -90,10 +92,10 @@
                                             </v-col>
                                             <v-col cols="12" sm="6"
                                             >
-                                                <h3 style="padding-left: 17px;padding-top: 15px"
+                                                <h3 style="padding-left: 17px;padding-top:15px"
                                                 color="black">步骤</h3>
                                             </v-col>
-                                            <v-col cols="12"  sm="6" style="padding-left: 20%"
+                                            <v-col cols="12"  sm="6" style="padding-left: 20% ; padding-bottom: 5px"
                                             >
                                                 <v-btn @click="addsteps"
                                                 >
@@ -101,12 +103,13 @@
                                                 </v-btn>
                                             </v-col>
                                             <v-col cols="12"  sm="12">
-                                            <v-divider></v-divider>
+                                            <v-divider style="padding-bottom: 5px"></v-divider>
                                             </v-col>
                                             <v-col>
-                                                <v-simple-table>
-                                                    <template v-slot:default>
-                                                        <thead>
+                                                <v-simple-table style="padding-bottom: 20px"
+                                                        dense >
+                                                    <template v-slot:default >
+                                                        <thead style="margin-bottom: 100px">
                                                         <tr>
                                                             <th class="text--accent-1" width="3">
                                                                 步骤序号
@@ -114,7 +117,7 @@
                                                             <th class="text--accent-1" width="12">
                                                                 步骤内容
                                                             </th>
-                                                            <th class="text--accent-1">操作</th>
+                                                            <th class="text--accent-1" style="padding-left: 25px">操作</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -122,16 +125,18 @@
                                                             <td width="5px"><v-text-field
                                                                     v-model="item1.id"
                                                                     :readonly=true
+                                                                    dense
                                                                     autofocus
                                                             ></v-text-field></td>
                                                             <td><v-text-field
                                                                     v-model="item1.content"
                                                                     :readonly="item1.readonly"
+                                                                    dense
                                                                     autofocus
                                                             ></v-text-field></td>
                                                             <td width="15px">
                                                                 <!-- 非修改界面显示修改，修改界面显示保存 -->
-                                                                <v-btn rounded color="primary" dark @click="editstep(item1)" small>{{ item1.readonly? "修改":"保存" }}</v-btn>
+                                                                <v-btn rounded color="primary" dark @click="editstep(item1)" small style="margin-right: 10px">{{ item1.readonly? "修改":"保存" }}</v-btn>
                                                                 <!-- 非修改界面显示删除 -->
                                                                 <v-btn rounded color="error" dark small v-if="item1.readonly" @click="delstep(item1)">删除</v-btn>
                                                                 <!-- 修改界面显示取消 -->
@@ -150,7 +155,7 @@
                                     <v-btn
                                             color="blue darken-1"
                                             text
-                                            @click="dialognewperson = false"
+                                            @click="changetostring"
                                     >
                                         新增
                                     </v-btn>
@@ -186,7 +191,8 @@
                         <v-spacer></v-spacer><!--以下为修改删除弹框-->
                         <v-dialog
                                 v-model="dialog"
-                                max-width="1000px"
+                                persistent
+                                max-width="600px"
                         >
                             <v-card>
                                 <v-card-title>
@@ -199,52 +205,87 @@
                                             <v-col
                                                     cols="12"
                                                     sm="6"
-                                                    md="4"
                                             >
                                                 <v-text-field
                                                         v-model="editedItem.name"
+                                                        outlined
+                                                        dense
                                                         label="流程名称"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col
                                                     cols="12"
                                                     sm="6"
-                                                    md="4"
                                             >
-                                                <v-text-field
-                                                        v-model="editedItem.style"
-                                                        label="流程类型"
-                                                ></v-text-field>
+                                                <treeselect v-model="editedItem.style"
+                                                            :disableBranchNodes="true"
+                                                            :multiple="false"
+                                                            :options="options"
+                                                            :flat="true"
+                                                            :sort-value-by="sortValueBy"
+                                                            :default-expand-level="1"
+                                                            placeholder="选择流程类型"
+                                                >
+                                                    <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                                                </treeselect>
+                                                <treeselect-value :value="editvalue"></treeselect-value>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12" sm="6"
                                             >
-                                                <v-text-field
-                                                        v-model="editedItem.code"
-                                                        label="流程编码"
-                                                ></v-text-field>
+                                                <h3 style="padding-left: 17px;padding-top:15px"
+                                                    color="black">步骤</h3>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
+                                            <v-col cols="12"  sm="6" style="padding-left: 20% ; padding-bottom: 5px"
                                             >
-                                                <v-text-field
-                                                        v-model="editedItem.step"
-                                                        label="步骤"
-                                                ></v-text-field>
+                                                <v-btn @click="addsteps"
+                                                >
+                                                    新增步骤
+                                                </v-btn>
                                             </v-col>
-                                            <v-col
-                                                    cols="12"
-                                                    sm="6"
-                                                    md="4"
-                                            >
-                                                <v-text-field
-                                                        v-model="editedItem.protein"
-                                                        label="Protein (g)"
-                                                ></v-text-field>
+                                            <v-col cols="12"  sm="12">
+                                                <v-divider style="padding-bottom: 5px"></v-divider>
+                                            </v-col>
+                                            <v-col>
+                                                <v-simple-table style="padding-bottom: 20px"
+                                                                dense >
+                                                    <template v-slot:default >
+                                                        <thead style="margin-bottom: 100px">
+                                                        <tr>
+                                                            <th class="text--accent-1" width="3">
+                                                                步骤序号
+                                                            </th>
+                                                            <th class="text--accent-1" width="12">
+                                                                步骤内容
+                                                            </th>
+                                                            <th class="text--accent-1" style="padding-left: 25px">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr v-for="item1 in step" :key="item1.id">
+                                                            <td width="5px"><v-text-field
+                                                                    v-model="item1.id"
+                                                                    :readonly=true
+                                                                    dense
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                            <td><v-text-field
+                                                                    v-model="item1.content"
+                                                                    :readonly="item1.readonly"
+                                                                    dense
+                                                                    autofocus
+                                                            ></v-text-field></td>
+                                                            <td width="15px">
+                                                                <!-- 非修改界面显示修改，修改界面显示保存 -->
+                                                                <v-btn rounded color="primary" dark @click="editstep(item1)" small style="margin-right: 10px">{{ item1.readonly? "修改":"保存" }}</v-btn>
+                                                                <!-- 非修改界面显示删除 -->
+                                                                <v-btn rounded color="error" dark small v-if="item1.readonly" @click="delstep(item1)">删除</v-btn>
+                                                                <!-- 修改界面显示取消 -->
+                                                                <v-btn rounded color="success" dark small v-if="!item1.readonly" @click="cancelstep(item1)">取消</v-btn>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </template>
+                                                </v-simple-table>
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -255,23 +296,23 @@
                                     <v-btn
                                             color="blue darken-1"
                                             text
-                                            @click="close"
-                                    >
-                                        Cancel
-                                    </v-btn>
-                                    <v-btn
-                                            color="blue darken-1"
-                                            text
                                             @click="save"
                                     >
-                                        Save
+                                        保存
+                                    </v-btn>
+                                    <v-btn
+                                            color="black darken-1"
+                                            text
+                                            @click="close"
+                                    >
+                                        取消
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
                         <v-dialog v-model="dialogDelete" max-width="500px">
                             <v-card>
-                                <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+                                <v-card-title class="headline">你确定要删除这个流程吗?</v-card-title>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -331,6 +372,31 @@
             sortValueBy: 'ORDER_SELECTED',
             value: null,
             addvalue:null,
+            editvalue:null,
+            //增加表项
+            addstepitem:{
+                id:0,
+                name: '',
+                style: "",
+                code: "",
+                step: "",
+            },
+            //define codeoption
+            codeoption:[{
+                code:154,
+                option:"自然灾害火灾一级"
+    },
+    {
+        code:155,
+            option:"自然灾害火灾二级"
+    },{
+                    code:152,
+                    option:"自然灾害水旱灾害一级"
+     },{
+                    code:153,
+                    option:"自然灾害水旱灾害二级"
+       }
+    ],
             // define options
             options: [ {
                 id: '自然灾害',
@@ -342,12 +408,14 @@
                         {
                             id:'自然灾害水旱灾害一级',
                             label:"一级",
+                            code:'152',
                             customLabel: `自然灾害水旱灾害一级`,
 
                         },
                         {
                             id:'自然灾害水旱灾害二级',
                             label:'二级',
+                            code:'153',
                             customLabel: `自然灾害水旱灾害二级`,
                         },
                     ]
@@ -358,11 +426,13 @@
                         {
                             id:'自然灾害火灾一级',
                             label:'一级',
+                            code:'154',
                             customLabel: `自然灾害火灾一级`,
                         },
                         {
                             id:'自然灾害火灾二级',
                             label:'二级',
+                            code:'155',
                             customLabel: `自然灾害火灾二级`,
                         },
                     ]
@@ -594,6 +664,22 @@
                     content:"第"+a+"步",
                     readonly:true
                 })
+            },
+            changetostring(){
+                var b=""
+                for(var i=0;i<this.step.length;i++){
+                    var a=(i+1)+"."+this.step[i].content+" "
+                    b=b+a
+                }
+                console.log(b)
+                this.addstepitem.step=b
+                var add=this.addstepitem
+                this.desserts.push(add)
+                /*this.addstepitem.id=0
+                this.addstepitem.step=""
+                this.addstepitem.style=""
+                this.addstepitem.name=""
+                this.addstepitem.code=""*/
             }
         }
     }
@@ -605,5 +691,8 @@
         position:absolute;
         left: 3%;
         top:3%;
+    }
+    .height{
+        height: 20px;
     }
 </style>
