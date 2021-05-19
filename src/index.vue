@@ -106,7 +106,13 @@ line-height: 3rem;">
                     <el-form-item  prop="checkPass" label-width="0px">
                       <el-input type="password" placeholder="请输入密码"  v-model="ruleForm.checkPass" autocomplete="off"></el-input>
                     </el-form-item>
-                    <br>
+                        <v-col style="max-height: fit-content;padding-top:0px;padding-left: 0px">
+                          <v-checkbox
+                              v-model="checkbox"
+                              label="记住密码"
+                              style="margin-top: 0px"
+                          ></v-checkbox>
+                        </v-col>
                     <el-form-item label-width="0px">
                       <v-row style="align-items: center;justify-content: center">
                         <v-btn color="light-blue lighten-1" large width="90%" @click="submitForm('ruleForm')&&$router.push(firsturl)" style="color: white">登录</v-btn>
